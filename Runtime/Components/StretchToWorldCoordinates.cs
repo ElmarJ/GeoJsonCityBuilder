@@ -1,43 +1,47 @@
-using Data.GeoJSON;
+using GeoJsonCityBuilder.Data.GeoJSON;
 using UnityEngine;
 
-// [ExecuteInEditMode]
-[RequireComponent(typeof(PositionOnWorldCoordinates))]
-[RequireComponent(typeof(StretchToPoint))]
-public class StretchToWorldCoordinates : MonoBehaviour
+namespace GeoJsonCityBuilder
 {
-    PositionOnWorldCoordinates parentPositionComponent;
-    StretchToPoint stretchComponent;
 
-    public float lat;
-    public float lon;
-    public Coordinate EndCoordinate
+    // [ExecuteInEditMode]
+    [RequireComponent(typeof(PositionOnWorldCoordinates))]
+    [RequireComponent(typeof(StretchToPoint))]
+    public class StretchToWorldCoordinates : MonoBehaviour
     {
-        get => new Coordinate(lon, lat);
-        set
+        PositionOnWorldCoordinates parentPositionComponent;
+        StretchToPoint stretchComponent;
+
+        public float lat;
+        public float lon;
+        public Coordinate EndCoordinate
         {
-            this.lat = value.Lat;
-            this.lon = value.Lon;
+            get => new Coordinate(lon, lat);
+            set
+            {
+                this.lat = value.Lat;
+                this.lon = value.Lon;
+            }
         }
-    }
 
-    void Awake()
-    {
-        parentPositionComponent = transform.parent?.gameObject.GetComponent<PositionOnWorldCoordinates>();
-        stretchComponent = gameObject.GetComponent<StretchToPoint>();
-    }
-
-    void Start()
-    {
-        Recalculate();
-    }
-
-    public void Recalculate()
-    {
-        if(this.parentPositionComponent != null)
+        void Awake()
         {
-            stretchComponent.endPoint = this.EndCoordinate.ToLocalGrid(this.parentPositionComponent.Origin);
-            stretchComponent.PerformStretch();
+            parentPositionComponent = transform.parent?.gameObject.GetComponent<PositionOnWorldCoordinates>();
+            stretchComponent = gameObject.GetComponent<StretchToPoint>();
+        }
+
+        void Start()
+        {
+            Recalculate();
+        }
+
+        public void Recalculate()
+        {
+            if (this.parentPositionComponent != null)
+            {
+                stretchComponent.endPoint = this.EndCoordinate.ToLocalGrid(this.parentPositionComponent.Origin);
+                stretchComponent.PerformStretch();
+            }
         }
     }
 }

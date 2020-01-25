@@ -1,42 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Data.GeoJSON;
+using GeoJsonCityBuilder.Data.GeoJSON;
 using UnityEngine;
 
-// [ExecuteInEditMode]
-public class PositionOnWorldCoordinates : MonoBehaviour
+namespace GeoJsonCityBuilder
 {
-    // 52.367
-    // 4.905
 
-    public Coordinate Origin;
-    private PositionOnWorldCoordinates parentComponent;
-
-
-    void Awake()
+    // [ExecuteInEditMode]
+    public class PositionOnWorldCoordinates : MonoBehaviour
     {
-    }
+        // 52.367
+        // 4.905
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        this.Recalculate();
-    }
+        public Coordinate Origin;
+        private PositionOnWorldCoordinates parentComponent;
 
-    public void Recalculate()
-    {
-        var parent = gameObject.transform.parent;
-        if (parent == null) return;
 
-        var parentComponent = parent.gameObject.GetComponent<PositionOnWorldCoordinates>();
+        void Awake()
+        {
+        }
 
-        // Only continue if our parent also has this component (and thus global coordinates)
-        // else we are the root ourselves, and don't need to move as  we _define_ the origin
-        if (parentComponent == null) return;
+        // Start is called before the first frame update
+        void Start()
+        {
+            this.Recalculate();
+        }
 
-        var planeLocation = Coordinate.MeterVectorFromCoordinates(parentComponent.Origin, this.Origin);
-        var height = this.gameObject.transform.position.y;
+        public void Recalculate()
+        {
+            var parent = gameObject.transform.parent;
+            if (parent == null) return;
 
-        this.gameObject.transform.localPosition = new Vector3(planeLocation.x, height, planeLocation.y);
+            var parentComponent = parent.gameObject.GetComponent<PositionOnWorldCoordinates>();
+
+            // Only continue if our parent also has this component (and thus global coordinates)
+            // else we are the root ourselves, and don't need to move as  we _define_ the origin
+            if (parentComponent == null) return;
+
+            var planeLocation = Coordinate.MeterVectorFromCoordinates(parentComponent.Origin, this.Origin);
+            var height = this.gameObject.transform.position.y;
+
+            this.gameObject.transform.localPosition = new Vector3(planeLocation.x, height, planeLocation.y);
+        }
     }
 }

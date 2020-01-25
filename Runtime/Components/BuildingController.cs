@@ -1,37 +1,40 @@
 using System.Collections.Generic;
 using System.Linq;
-using Data.GeoJSON;
+using GeoJsonCityBuilder.Data.GeoJSON;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
-public class BuildingController : MonoBehaviour
+namespace GeoJsonCityBuilder
 {
-    public IList<Vector3> floor;
-
-    public Material wallMaterial;
-    public float height = 10f;
-    private void Start()
+    public class BuildingController : MonoBehaviour
     {
-    }
+        public IList<Vector3> floor;
 
-    public void DrawBuilding()
-    {
-        var mesh = gameObject.AddComponent<ProBuilderMesh>();
-        if (gameObject.GetComponent<MeshCollider>() == null)
+        public Material wallMaterial;
+        public float height = 10f;
+        private void Start()
         {
-            gameObject.AddComponent<MeshCollider>();
         }
 
-        var first = floor.First();
-        var last = floor.Last();
-        if (first.x == last.x && first.y == last.y && first.z == last.z)
+        public void DrawBuilding()
         {
-            floor.Remove(floor.Last());
+            var mesh = gameObject.AddComponent<ProBuilderMesh>();
+            if (gameObject.GetComponent<MeshCollider>() == null)
+            {
+                gameObject.AddComponent<MeshCollider>();
+            }
+
+            var first = floor.First();
+            var last = floor.Last();
+            if (first.x == last.x && first.y == last.y && first.z == last.z)
+            {
+                floor.Remove(floor.Last());
+            }
+
+            mesh.CreateShapeFromPolygon(floor, height, false);
+            gameObject.GetComponent<MeshRenderer>().material = this.wallMaterial;
+
         }
-
-        mesh.CreateShapeFromPolygon(floor, height, false);
-        gameObject.GetComponent<MeshRenderer>().material = this.wallMaterial;
-
     }
 }
