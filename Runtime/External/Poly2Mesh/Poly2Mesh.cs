@@ -143,20 +143,26 @@ public static class Poly2Mesh {
 			}
 		}
 
-		// Create the UV list, by looking up the closest point for each in our poly
-		Vector2[] uv = null;
-		if (polygon.outsideUVs != null) {
-			uv = new Vector2[vertexList.Count];
-			for (int i=0; i<vertexList.Count; i++) {
-				uv[i] = polygon.ClosestUV(vertexList[i]);
-			}
-		}
-		
-		// Create the mesh
 		Mesh msh = new Mesh();
 		msh.vertices = vertexList.ToArray();
+
+		// Create the UV list, by looking up the closest point for each in our poly
+		Vector2[] uvs = new Vector2[msh.vertices.Length];
+        for (int i=0; i < uvs.Length; i++) {
+            uvs[i] = new Vector2(msh.vertices[i].x, msh.vertices[i].y);
+        }
+        msh.uv = uvs;
+
+		// Vector2[] uv = null;
+		// if (polygon.outsideUVs != null) {
+		// 	uv = new Vector2[vertexList.Count];
+		// 	for (int i=0; i<vertexList.Count; i++) {
+		// 		uv[i] = polygon.ClosestUV(vertexList[i]);
+		// 	}
+		// }
+		
+		// Create the mesh
 		msh.triangles = indices;
-		msh.uv = uv;
 		msh.RecalculateNormals();
 		msh.RecalculateBounds();
 		return msh;

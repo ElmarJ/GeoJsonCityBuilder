@@ -1,11 +1,11 @@
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace GeoJsonCityBuilder.Data.GeoJSON {
     public class FeatureCollection
     {
         public string Type { get; set; }
-        public Collection<Feature> Features { get; } = new Collection<Feature>();
+        public List<Feature> Features { get; } = new List<Feature>();
 
     }
 }

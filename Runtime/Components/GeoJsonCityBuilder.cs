@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using System.Linq;
 using GeoJsonCityBuilder.Data.GeoJSON;
 using UnityEditor;
@@ -25,8 +26,6 @@ namespace GeoJsonCityBuilder
         void Start()
         {
             origin = GetComponent<PositionOnWorldCoordinates>().Origin;
-
-            Rebuild();
         }
 
         // Update is called once per frame
@@ -68,9 +67,10 @@ namespace GeoJsonCityBuilder
 
         public void Rebuild()
         {
-            // DrawCanals(features);
             RemoveAllChildren();
             DeserializeGeoJsonIfNecessary();
+
+            CreateTerrain(dataFromJson.Features, 2000f);
 
             int i = 0;
 
@@ -115,6 +115,28 @@ namespace GeoJsonCityBuilder
                 var points = from coor in polygon.Coordinates[0] select new Vector3(coor.ToLocalGrid(origin).x, 0.5f, coor.ToLocalGrid(origin).y);
                 //            canalController.DrawCanal(points.ToArray(), 2f);
             }
+        }
+
+        private void CreateTerrain(List<Feature> features, float sizeBorderToCenter)
+        {
+            var canalPolygons = (from feature in features where feature.Properties.Type == "Canal" select feature.Geometry as PolygonGeometry).ToList();
+
+            Poly2Mesh.Polygon poly = new Poly2Mesh.Polygon();
+            poly.outside = new List<Vector3>() {
+                new Vector3(sizeBorderToCenter * -1, 0, sizeBorderToCenter),
+                new Vector3(sizeBorderToCenter, 0, sizeBorderToCenter),
+                new Vector3(sizeBorderToCenter, 0, sizeBorderToCenter * -1),
+                new Vector3(sizeBorderToCenter * -1, 0, sizeBorderToCenter * -1),
+            };
+            foreach (var polygon in canalPolygons)
+            {
+                var points = from coor in polygon.Coordinates[0] select new Vector3(coor.ToLocalGrid(origin).x, 0f, coor.ToLocalGrid(origin).y);
+
+                poly.holes.Add(new List<Vector3>(points));
+            }
+    
+            // Set up game object with mesh;
+            Poly2Mesh.CreateGameObject(poly);
         }
     }
 }
