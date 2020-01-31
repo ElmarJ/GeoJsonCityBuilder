@@ -16,6 +16,7 @@ namespace GeoJsonCityBuilder
     {
         public TextAsset geoJsonFile;
         public Material wallMaterial;
+        public Material streetMaterial;
         public GameObject treePrefab;
 
         private Coordinate origin;
@@ -67,7 +68,6 @@ namespace GeoJsonCityBuilder
 
         public void Rebuild()
         {
-            RemoveAllChildren();
             DeserializeGeoJsonIfNecessary();
 
             CreateTerrain(dataFromJson.Features, 2000f);
@@ -136,7 +136,28 @@ namespace GeoJsonCityBuilder
             }
     
             // Set up game object with mesh;
-            Poly2Mesh.CreateGameObject(poly);
+            GameObject go = Poly2Mesh.CreateGameObject(poly);
+            go.name = "Street";
+            go.transform.parent = transform;
+            
+            // Probuilderize:
+            var filter = go.GetComponent<MeshFilter>();
+            var mesh = go.AddComponent<ProBuilderMesh>();
+            var importer = new MeshImporter(mesh);
+            importer.Import(filter.sharedMesh);
+            mesh.ToMesh();
+
+            // Add collider:
+            var collider = go.AddComponent<MeshCollider>();
+
+            // Set material and use auto UV using world space (to prevent stretching):
+            foreach(var face in mesh.faces)
+            {
+                face.manualUV = false;
+            }
+            go.GetComponent<MeshRenderer>().material = this.streetMaterial;
+            
+            mesh.Refresh();
         }
     }
 }

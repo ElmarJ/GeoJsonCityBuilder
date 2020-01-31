@@ -13,9 +13,6 @@ namespace GeoJsonCityBuilder
 
         public Material wallMaterial;
         public float height = 10f;
-        private void Start()
-        {
-        }
 
         public void DrawBuilding()
         {
