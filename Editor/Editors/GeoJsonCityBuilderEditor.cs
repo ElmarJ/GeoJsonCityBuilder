@@ -13,6 +13,7 @@ namespace GeoJsonCityBuilder.Editor
     {
         SerializedProperty geoJsonFile;
         SerializedProperty wallMaterial;
+        SerializedProperty waterMaterial;
         SerializedProperty streetMaterial;
         SerializedProperty treePrefab;
 
@@ -20,6 +21,7 @@ namespace GeoJsonCityBuilder.Editor
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
             wallMaterial = serializedObject.FindProperty("wallMaterial");
+            waterMaterial = serializedObject.FindProperty("waterMaterial");
             streetMaterial = serializedObject.FindProperty("streetMaterial");
             treePrefab = serializedObject.FindProperty("treePrefab");
         }
@@ -30,6 +32,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(geoJsonFile);
             EditorGUILayout.PropertyField(wallMaterial);
             EditorGUILayout.PropertyField(streetMaterial);
+            EditorGUILayout.PropertyField(waterMaterial);
             EditorGUILayout.PropertyField(treePrefab);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))

@@ -16,6 +16,7 @@ namespace GeoJsonCityBuilder
     {
         public TextAsset geoJsonFile;
         public Material wallMaterial;
+        public Material waterMaterial;
         public Material streetMaterial;
         public GameObject treePrefab;
 
@@ -41,7 +42,7 @@ namespace GeoJsonCityBuilder
 
         void DeserializeGeoJsonIfNecessary()
         {
-            if (dataFromJson == null)
+            if (true || dataFromJson == null)
             {
                 var geoJSON = new GeoJSONObject(geoJsonFile.text);
                 dataFromJson = geoJSON.FeatureCollection;
@@ -68,8 +69,8 @@ namespace GeoJsonCityBuilder
 
         public void Rebuild()
         {
+            RemoveAllChildren();
             DeserializeGeoJsonIfNecessary();
-
             CreateTerrain(dataFromJson.Features, 2000f);
 
             int i = 0;
@@ -104,7 +105,6 @@ namespace GeoJsonCityBuilder
                 }
             }
 
-            EditorApplication.QueuePlayerLoopUpdate();
         }
 
         private void DrawCanals(IEnumerable<Feature> features)
@@ -136,28 +136,112 @@ namespace GeoJsonCityBuilder
             }
     
             // Set up game object with mesh;
-            GameObject go = Poly2Mesh.CreateGameObject(poly);
-            go.name = "Street";
-            go.transform.parent = transform;
+            GameObject terrainObject = Poly2Mesh.CreateGameObject(poly);
+            terrainObject.name = "Street";
+            terrainObject.transform.parent = transform;
             
             // Probuilderize:
-            var filter = go.GetComponent<MeshFilter>();
-            var mesh = go.AddComponent<ProBuilderMesh>();
-            var importer = new MeshImporter(mesh);
+            var filter = terrainObject.GetComponent<MeshFilter>();
+            var terrainMesh = terrainObject.AddComponent<ProBuilderMesh>();
+            var importer = new MeshImporter(terrainMesh);
             importer.Import(filter.sharedMesh);
-            mesh.ToMesh();
 
             // Add collider:
-            var collider = go.AddComponent<MeshCollider>();
+            var collider = terrainObject.AddComponent<MeshCollider>();
 
             // Set material and use auto UV using world space (to prevent stretching):
-            foreach(var face in mesh.faces)
+            foreach(var face in terrainMesh.faces)
             {
                 face.manualUV = false;
             }
-            go.GetComponent<MeshRenderer>().material = this.streetMaterial;
-            
-            mesh.Refresh();
+            terrainObject.GetComponent<MeshRenderer>().material = this.streetMaterial;
+
+            terrainMesh.ToMesh();            
+            terrainMesh.Refresh();
+
+
+            // Now add the canal containers:
+            foreach (var polygon in canalPolygons)
+            {
+                var canalObject = new GameObject("Canal");
+                canalObject.transform.parent = transform;
+                var canalMesh = canalObject.AddComponent<ProBuilderMesh>();
+                canalObject.AddComponent<MeshCollider>();
+                
+                var points = (from coor in polygon.Coordinates[0] select new Vector3(coor.ToLocalGrid(origin).x, 0f, coor.ToLocalGrid(origin).y)).ToList();
+
+                var first = points.First();
+                var last = points.Last();
+                if (first.x == last.x && first.y == last.y && first.z == last.z)
+                {
+                    points.Remove(points.Last());
+                }
+
+                const float canalDepth = 2f;
+                
+                canalMesh.CreateShapeFromPolygon(points, -1 * canalDepth, false);
+                
+                // Find the top face:
+                Face ceiling = null;
+                foreach(var face in canalMesh.faces)
+                {
+                    ceiling = face;
+                    foreach(var vertex in canalMesh.GetVertices(face.distinctIndexes))
+                    {
+                        if (vertex.position.y < 0)
+                        {
+                            ceiling = null;
+                            break;
+                        }
+                    }
+                    if (ceiling != null)
+                    {
+                        break;
+                    }
+                }
+
+
+                // Delete the top face:
+                canalMesh.DeleteFace(ceiling);
+                
+
+
+                // Find the bottom face:
+                Face bottom = null;
+                foreach(var face in canalMesh.faces)
+                {
+                    bottom = face;
+                    foreach(var vertex in canalMesh.GetVertices(face.distinctIndexes))
+                    {
+                        if (vertex.position.y == 0)
+                        {
+                            bottom = null;
+                            break;
+                        }
+                    }
+                    if (bottom != null)
+                    {
+                        break;
+                    }
+                }
+
+                foreach(var face in canalMesh.faces)
+                {
+                    face.Reverse();
+                }
+
+                canalMesh.ToMesh();
+
+                canalMesh.SetMaterial(canalMesh.faces, this.wallMaterial);
+                canalMesh.SetMaterial(new List<Face>() { bottom }, this.waterMaterial);
+                //canalMesh.GetComponent<MeshRenderer>().material = this.wallMaterial;
+
+
+                canalMesh.Refresh();
+
+            }
+
+
         }
     }
 }

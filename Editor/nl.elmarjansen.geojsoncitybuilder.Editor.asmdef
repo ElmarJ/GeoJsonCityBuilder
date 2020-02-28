@@ -2,14 +2,19 @@
     "name": "nl.elmarjansen.geojsoncitybuilder.Editor",
     "references": [
         "GUID:06caca9f4a4e2df44be0fb839f0e299d",
-        "GUID:3309e6465241f264eadb0960e9ffecde"
+        "GUID:3309e6465241f264eadb0960e9ffecde",
+        "GUID:49818357e697641afb75d2f8acaf1861",
+        "GUID:1826c0224c0d048b88112c79bbb0cd85"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }

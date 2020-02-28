@@ -6,5 +6,6 @@ namespace GeoJsonCityBuilder.Data.GeoJSON {
     public class Properties
     {
         public string Type { get; set; }
+        public float? Height { get; set; }
     }
 }

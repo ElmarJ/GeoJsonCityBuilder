@@ -28,6 +28,7 @@ namespace GeoJsonCityBuilder.Data.GeoJSON
 
                 feature.Type = jsonFeature["type"].str;
                 feature.Properties.Type = jsonFeature["properties"]["type"]?.str;
+                feature.Properties.Height = jsonFeature["properties"]["height"]?.f;
 
                 var geometryType = jsonFeature["geometry"]["type"];
 

@@ -181,7 +181,7 @@ public static class Poly2Mesh {
 		gob.name = name;
 		gob.AddComponent(typeof(MeshRenderer));
 		MeshFilter filter = gob.AddComponent(typeof(MeshFilter)) as MeshFilter;
-		filter.mesh = CreateMesh(polygon);
+		filter.sharedMesh = CreateMesh(polygon);
 		return gob;
 	}
 }
