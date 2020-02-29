@@ -15,6 +15,17 @@ namespace GeoJsonCityBuilder
         public Material sideMaterial;
         public float height = 10f;
 
+        public bool pointedRoof = false;
+        public float pointedRoofHeight = 3f;
+
+        public float leanForward = 0f;
+
+        Edge shortestEdge = new Edge();
+        Edge oppositeEdge = new Edge();
+        bool fourSides = false;
+
+        public ProBuilderMesh pb;
+
         public void Draw()
         {
             var mesh = gameObject.AddComponent<ProBuilderMesh>();
@@ -32,7 +43,7 @@ namespace GeoJsonCityBuilder
 
             mesh.CreateShapeFromPolygon(floor, height, false);
 
-            var pb = gameObject.GetComponent<ProBuilderMesh>();
+            pb = gameObject.GetComponent<ProBuilderMesh>();
             if (pb.faceCount > 2)
             {
                 pb.SetMaterial(pb.faces, sideMaterial);
@@ -42,19 +53,26 @@ namespace GeoJsonCityBuilder
                 pb.Refresh();
             }
 
-            // AddPointedRoof();
+            FindSpecialSides();
+
+            LeanForward();
+
+            if (pointedRoof)
+            {
+                AddPointedRoof();
+            }
+
         }
 
-        public void AddPointedRoof() {
-            const float roofHeight = 3f;
-            var pb = gameObject.GetComponent<ProBuilderMesh>();            
+        public void FindSpecialSides()
+        {
             if (pb.faces.Count < 5)
             {
                 return;
             }
+
             var topFace = pb.faces[0];
             var wingedEdges = WingedEdge.GetWingedEdges(pb, new Face[] {topFace}, false);
-
 
             // For now, this only works on blocks with a building with 4 sides.
             if (topFace.edges.Count != 4)
@@ -62,9 +80,9 @@ namespace GeoJsonCityBuilder
                 return;
             }
 
+            fourSides = true;
             float shortestDistance = 0f;
-            Edge shortestEdge = new Edge();
-            Edge oppositeEdge = new Edge();
+
 
             // find shortest side:
             foreach (var wingedEdge in wingedEdges)
@@ -88,17 +106,68 @@ namespace GeoJsonCityBuilder
                     break;
                 }
             }
+        }
+
+
+        public void AddPointedRoof() {
+            if (!fourSides)
+            {
+                return;
+            }
+
             try {
                 var connectResult = pb.Connect(new Edge[] {shortestEdge, oppositeEdge});
                 var newEdge = connectResult.item2[0];
                 var extrudedEdges = pb.Extrude(new Edge[] {newEdge}, 0f, false, true);           
-                pb.TranslateVertices(connectResult.item2, new Vector3(0f, roofHeight, 0f));
+                pb.TranslateVertices(connectResult.item2, new Vector3(0f, pointedRoofHeight, 0f));
                 pb.ToMesh();
                 pb.Refresh();
             }
-            catch (System.Exception ex) {
+            catch (System.Exception) {
                 
             }
+        }
+
+        public void LeanForward() {
+
+            if (!fourSides | leanForward == 0)
+            {
+                return;
+            }
+
+            LeanForwardFromTopEdge(shortestEdge);
+            LeanForwardFromTopEdge(oppositeEdge);
+        }
+
+        public void LeanForwardFromTopEdge(Edge edge)
+        {
+            var edgePoints = pb.GetVertices(new List<int>() {edge.a, edge.b});
+            var vector = edgePoints[1].position - edgePoints[0].position;
+            var dist = vector.magnitude;
+            var transform = new Vector3(vector.z * leanForward / vector.magnitude, 0, vector.x * leanForward / vector.magnitude);
+
+            pb.TranslateVertices(new List<Edge>(){shortestEdge}, transform);
+            pb.ToMesh();
+            pb.Refresh();
+        }
+
+        private Face findWallBelow(Edge edge)
+        {
+            // find the wall-face below, to get its normal (because we want to stretch in that direction);
+            var i = 0;
+            foreach (var face in pb.faces) {
+                // first we get the bottom and ceiling, we want to skip those
+                if (i > 1)
+                {
+                    if (face.edges.Contains(edge))
+                    {
+                        return face;
+                    }
+                }
+                i++;
+            }
+
+            return null;
         }
     }
 }
