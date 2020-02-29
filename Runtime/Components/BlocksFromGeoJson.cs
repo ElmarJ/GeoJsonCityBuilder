@@ -16,7 +16,7 @@ namespace GeoJsonCityBuilder
         public float heightMin;
         public float heightMax;
         public Material topMaterial;
-        public Material sideMaterial;
+        public List<Material> sideMaterials;
         public Material bottomMaterial;
 
         Coordinate m_origin;
@@ -89,6 +89,7 @@ namespace GeoJsonCityBuilder
             foreach (var feature in m_features)
             {
                 var geometry = feature.Geometry as PolygonGeometry;
+                var rnd = new System.Random();
 
                 var block = new GameObject(featureTypeFilter + i++.ToString());
                 block.transform.parent = transform;
@@ -96,7 +97,7 @@ namespace GeoJsonCityBuilder
                 var controller = block.AddComponent<BlockFromFeature>();
                 controller.height = feature.Properties.Height == null || feature.Properties.Height == 0 ? Random.Range(heightMin, heightMax) : feature.Properties.Height.Value;
 
-                controller.sideMaterial = sideMaterial;
+                controller.sideMaterial = sideMaterials[rnd.Next(sideMaterials.Count)];
                 controller.topMaterial = topMaterial;
                 controller.bottomMaterial = bottomMaterial;
 

@@ -15,7 +15,7 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty heightMin;
         SerializedProperty heightMax;
         SerializedProperty topMaterial;
-        SerializedProperty sideMaterial;
+        SerializedProperty sideMaterials;
         SerializedProperty bottomMaterial;
 
         void OnEnable()
@@ -25,7 +25,7 @@ namespace GeoJsonCityBuilder.Editor
             heightMin = serializedObject.FindProperty("heightMin");
             heightMax = serializedObject.FindProperty("heightMax");
             topMaterial = serializedObject.FindProperty("topMaterial");
-            sideMaterial = serializedObject.FindProperty("sideMaterial");
+            sideMaterials = serializedObject.FindProperty("sideMaterials");
             bottomMaterial = serializedObject.FindProperty("bottomMaterial");
         }
 
@@ -39,7 +39,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(heightMax);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(topMaterial);
-            EditorGUILayout.PropertyField(sideMaterial);
+            EditorGUILayout.PropertyField(sideMaterials);
             EditorGUILayout.PropertyField(bottomMaterial);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
