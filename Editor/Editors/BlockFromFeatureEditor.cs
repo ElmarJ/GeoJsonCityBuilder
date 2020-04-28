@@ -14,12 +14,14 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty bottomMaterial;
         SerializedProperty sideMaterial;
         SerializedProperty height;
+        SerializedProperty sideUvUnwrapSettings;
 
         void OnEnable()
         {
             topMaterial = serializedObject.FindProperty("topMaterial");
             bottomMaterial = serializedObject.FindProperty("bottomMaterial");
             sideMaterial = serializedObject.FindProperty("sideMaterial");
+            sideUvUnwrapSettings = serializedObject.FindProperty("sideUvUnwrapSettings");
             height = serializedObject.FindProperty("height");
         }
 
@@ -31,6 +33,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(topMaterial);
             EditorGUILayout.PropertyField(bottomMaterial);
             EditorGUILayout.PropertyField(sideMaterial);
+            EditorGUILayout.PropertyField(sideUvUnwrapSettings);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Add Rooftop"))
             {

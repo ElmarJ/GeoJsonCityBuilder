@@ -41,7 +41,7 @@ namespace GeoJsonCityBuilder
             var geoJSON = new GeoJSONObject(geoJsonFile.text);
             var filteredGeometries =
                 from feature in geoJSON.FeatureCollection.Features
-                where feature.Properties.Type == featureTypeFilter
+                where featureTypeFilter == "" || feature.Properties.Type == featureTypeFilter
                 select feature.Geometry as PointGeometry;
             m_geometries = filteredGeometries.ToList();
         }

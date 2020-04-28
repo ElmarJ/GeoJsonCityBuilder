@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoJsonCityBuilder.Data.GeoJSON;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace GeoJsonCityBuilder
 {
@@ -16,8 +17,14 @@ namespace GeoJsonCityBuilder
         public float heightMin;
         public float heightMax;
         public Material topMaterial;
-        public List<Material> sideMaterials;
+        public Material sideMaterial1;
+        public Material sideMaterial2;
+        public Material sideMaterial3;
+        public Material sideMaterial4;
+        public Material sideMaterial5;
         public Material bottomMaterial;
+        public AutoUnwrapSettings sideUvUnwrapSettings = new AutoUnwrapSettings();
+        public bool pointedRoofTops = false;
 
         Coordinate m_origin;
         List<Feature> m_features;
@@ -79,6 +86,33 @@ namespace GeoJsonCityBuilder
             }
         }
 
+        private List<Material> GetSideMaterialList() {
+            List<Material> sideMaterials = new List<Material>();
+
+            if (sideMaterial1 != null)
+            {
+                sideMaterials.Add(sideMaterial1);
+            }
+            if (sideMaterial2 != null)
+            {
+                sideMaterials.Add(sideMaterial2);
+            }
+            if (sideMaterial3 != null)
+            {
+                sideMaterials.Add(sideMaterial3);
+            }
+            if (sideMaterial4 != null)
+            {
+                sideMaterials.Add(sideMaterial4);
+            }
+            if (sideMaterial5 != null)
+            {
+                sideMaterials.Add(sideMaterial5);
+            }
+
+            return sideMaterials;
+        }
+
         public void Rebuild()
         {
             RemoveAllChildren();
@@ -89,17 +123,19 @@ namespace GeoJsonCityBuilder
             foreach (var feature in m_features)
             {
                 var geometry = feature.Geometry as PolygonGeometry;
-                var rnd = new System.Random();
 
                 var block = new GameObject(featureTypeFilter + i++.ToString());
                 block.transform.parent = transform;
 
                 var controller = block.AddComponent<BlockFromFeature>();
                 controller.height = feature.Properties.Height == null || feature.Properties.Height == 0 ? Random.Range(heightMin, heightMax) : feature.Properties.Height.Value;
-
-                controller.sideMaterial = sideMaterials[rnd.Next(sideMaterials.Count)];
+                
+                var sideMaterials = GetSideMaterialList();
+                controller.sideMaterial = sideMaterials[Random.Range(0, sideMaterials.Count)];
                 controller.topMaterial = topMaterial;
                 controller.bottomMaterial = bottomMaterial;
+                controller.sideUvUnwrapSettings = sideUvUnwrapSettings;
+                controller.pointedRoof = pointedRoofTops;
 
                 controller.floor = new List<Vector3>(from coor in geometry.Coordinates[0] select new Vector3(coor.ToLocalGrid(m_origin).x, 0, coor.ToLocalGrid(m_origin).y));
 

@@ -6,7 +6,7 @@
   "unity": "2019.1",
   "unityRelease": "0b5",
   "dependencies": {
-    "com.unity.probuilder": "4.3.0-preview.1"
+    "com.unity.probuilder": "4.3.0-preview.7"
   },
   "keywords": [],
   "author": {

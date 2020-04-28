@@ -15,8 +15,15 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty heightMin;
         SerializedProperty heightMax;
         SerializedProperty topMaterial;
-        SerializedProperty sideMaterials;
+        SerializedProperty sideMaterial1;
+        SerializedProperty sideMaterial2;
+        SerializedProperty sideMaterial3;
+        SerializedProperty sideMaterial4;
+        SerializedProperty sideMaterial5;
+        SerializedProperty sideUvUnwrapSettings;
+
         SerializedProperty bottomMaterial;
+        SerializedProperty pointedRoofTops;
 
         void OnEnable()
         {
@@ -25,8 +32,14 @@ namespace GeoJsonCityBuilder.Editor
             heightMin = serializedObject.FindProperty("heightMin");
             heightMax = serializedObject.FindProperty("heightMax");
             topMaterial = serializedObject.FindProperty("topMaterial");
-            sideMaterials = serializedObject.FindProperty("sideMaterials");
+            sideMaterial1 = serializedObject.FindProperty("sideMaterial1");
+            sideMaterial2 = serializedObject.FindProperty("sideMaterial2");
+            sideMaterial3 = serializedObject.FindProperty("sideMaterial3");
+            sideMaterial4 = serializedObject.FindProperty("sideMaterial4");
+            sideMaterial5 = serializedObject.FindProperty("sideMaterial5");
+            sideUvUnwrapSettings = serializedObject.FindProperty("sideUvUnwrapSettings");
             bottomMaterial = serializedObject.FindProperty("bottomMaterial");
+            pointedRoofTops = serializedObject.FindProperty("pointedRoofTops");
         }
 
         public override void OnInspectorGUI()
@@ -37,9 +50,15 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(heightMin);
             EditorGUILayout.PropertyField(heightMax);
+            EditorGUILayout.PropertyField(pointedRoofTops);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(topMaterial);
-            EditorGUILayout.PropertyField(sideMaterials);
+            EditorGUILayout.PropertyField(sideMaterial1);
+            EditorGUILayout.PropertyField(sideMaterial2);
+            EditorGUILayout.PropertyField(sideMaterial3);
+            EditorGUILayout.PropertyField(sideMaterial4);
+            EditorGUILayout.PropertyField(sideMaterial5);
+            EditorGUILayout.PropertyField(sideUvUnwrapSettings);
             EditorGUILayout.PropertyField(bottomMaterial);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))

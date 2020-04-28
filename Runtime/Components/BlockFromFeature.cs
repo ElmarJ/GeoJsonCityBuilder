@@ -24,6 +24,8 @@ namespace GeoJsonCityBuilder
         Edge oppositeEdge = new Edge();
         bool fourSides = false;
 
+        public AutoUnwrapSettings sideUvUnwrapSettings = new AutoUnwrapSettings();
+
         public ProBuilderMesh pb;
 
         public void Draw()
@@ -49,9 +51,20 @@ namespace GeoJsonCityBuilder
                 pb.SetMaterial(pb.faces, sideMaterial);
                 pb.SetMaterial(new List<Face>() { pb.faces[0] }, topMaterial);
                 pb.SetMaterial(new List<Face>() { pb.faces[1] }, bottomMaterial);
+            }
+
+            var i = 0;
+            foreach (var face in pb.faces)
+            {
+                // Skip the bottom and ceiling face:
+                if (i>1)
+                {
+                    face.uv = this.sideUvUnwrapSettings;
+                }
+                i++;
+            }
                 pb.ToMesh();
                 pb.Refresh();
-            }
 
             FindSpecialSides();
 

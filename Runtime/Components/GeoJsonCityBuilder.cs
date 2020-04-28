@@ -141,15 +141,15 @@ namespace GeoJsonCityBuilder
             terrainObject.transform.parent = transform;
             
             // Probuilderize:
-            var filter = terrainObject.GetComponent<MeshFilter>();
-            var terrainMesh = terrainObject.AddComponent<ProBuilderMesh>();
-            var importer = new MeshImporter(terrainMesh);
-            importer.Import(filter.sharedMesh);
+            var importer = new MeshImporter(terrainObject);
+            importer.Import();
 
             // Add collider:
             var collider = terrainObject.AddComponent<MeshCollider>();
 
             // Set material and use auto UV using world space (to prevent stretching):
+
+            var terrainMesh = terrainObject.GetComponent<ProBuilderMesh>();
             foreach(var face in terrainMesh.faces)
             {
                 face.manualUV = false;
