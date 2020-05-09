@@ -37,6 +37,9 @@ namespace GeoJsonCityBuilder.Editor
             sideMaterial3 = serializedObject.FindProperty("sideMaterial3");
             sideMaterial4 = serializedObject.FindProperty("sideMaterial4");
             sideMaterial5 = serializedObject.FindProperty("sideMaterial5");
+            sideMaterial6 = serializedObject.FindProperty("sideMaterial6");
+            sideMaterial7 = serializedObject.FindProperty("sideMaterial7");
+            sideMaterial8 = serializedObject.FindProperty("sideMaterial8");
             sideUvUnwrapSettings = serializedObject.FindProperty("sideUvUnwrapSettings");
             bottomMaterial = serializedObject.FindProperty("bottomMaterial");
             pointedRoofTops = serializedObject.FindProperty("pointedRoofTops");
@@ -58,6 +61,9 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(sideMaterial3);
             EditorGUILayout.PropertyField(sideMaterial4);
             EditorGUILayout.PropertyField(sideMaterial5);
+            EditorGUILayout.PropertyField(sideMaterial6);
+            EditorGUILayout.PropertyField(sideMaterial7);
+            EditorGUILayout.PropertyField(sideMaterial8);
             EditorGUILayout.PropertyField(sideUvUnwrapSettings);
             EditorGUILayout.PropertyField(bottomMaterial);
             EditorGUILayout.BeginHorizontal();

@@ -22,6 +22,9 @@ namespace GeoJsonCityBuilder
         public Material sideMaterial3;
         public Material sideMaterial4;
         public Material sideMaterial5;
+        public Material sideMaterial6;
+        public Material sideMaterial7;
+        public Material sideMaterial8;
         public Material bottomMaterial;
         public AutoUnwrapSettings sideUvUnwrapSettings = new AutoUnwrapSettings();
         public bool pointedRoofTops = false;
@@ -93,6 +96,18 @@ namespace GeoJsonCityBuilder
             if (sideMaterial5 != null)
             {
                 sideMaterials.Add(sideMaterial5);
+            }
+            if (sideMaterial6 != null)
+            {
+                sideMaterials.Add(sideMaterial6);
+            }
+            if (sideMaterial7 != null)
+            {
+                sideMaterials.Add(sideMaterial7);
+            }
+            if (sideMaterial8 != null)
+            {
+                sideMaterials.Add(sideMaterial8);
             }
 
             return sideMaterials;
