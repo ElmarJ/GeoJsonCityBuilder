@@ -23,7 +23,12 @@ namespace GeoJsonCityBuilder
         private Coordinate origin;
 
         private FeatureCollection dataFromJson;
-
+        
+        // Start is called before the first frame update
+        void Start()
+        {
+            origin = GetComponent<PositionOnWorldCoordinates>().Origin;
+        }
         void DeserializeGeoJson()
         {
             var geoJSON = new GeoJSONObject(geoJsonFile.text);
