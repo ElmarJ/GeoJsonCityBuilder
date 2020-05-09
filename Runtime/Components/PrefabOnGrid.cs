@@ -23,19 +23,6 @@ public class PrefabOnGrid : MonoBehaviour
     float m_rowHeight;
     float m_columnWidth;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-//        RecalculateGrid();
-//        DrawGrid();
-    }
-
     public void RecalculateGrid() {
         var width = this.width;
         var height = this.height;

@@ -24,29 +24,10 @@ namespace GeoJsonCityBuilder
 
         private FeatureCollection dataFromJson;
 
-        // Start is called before the first frame update
-        void Start()
+        void DeserializeGeoJson()
         {
-            origin = GetComponent<PositionOnWorldCoordinates>().Origin;
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            if (!Application.IsPlaying(gameObject))
-            {
-                var geoJSON = new GeoJSONObject(geoJsonFile.text);
-                dataFromJson = geoJSON.FeatureCollection;
-            }
-        }
-
-        void DeserializeGeoJsonIfNecessary()
-        {
-            if (true || dataFromJson == null)
-            {
-                var geoJSON = new GeoJSONObject(geoJsonFile.text);
-                dataFromJson = geoJSON.FeatureCollection;
-            }
+            var geoJSON = new GeoJSONObject(geoJsonFile.text);
+            dataFromJson = geoJSON.FeatureCollection;
         }
 
         public void RemoveAllChildren()
@@ -70,7 +51,7 @@ namespace GeoJsonCityBuilder
         public void Rebuild()
         {
             RemoveAllChildren();
-            DeserializeGeoJsonIfNecessary();
+            DeserializeGeoJson();
             CreateTerrain(dataFromJson.Features, 2000f);
 
             int i = 0;

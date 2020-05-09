@@ -29,21 +29,6 @@ namespace GeoJsonCityBuilder
         Coordinate m_origin;
         List<Feature> m_features;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            if (!Application.IsPlaying(gameObject))
-            {
-                m_origin = GetComponent<PositionOnWorldCoordinates>().Origin;
-                DeserializeGeoJson();
-            }
-        }
-
         private void DeserializeGeoJson()
         {
             var geoJSON = new GeoJSONObject(geoJsonFile.text);

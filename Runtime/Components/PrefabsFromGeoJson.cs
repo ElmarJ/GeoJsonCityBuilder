@@ -28,14 +28,6 @@ namespace GeoJsonCityBuilder
             m_origin = GetComponent<PositionOnWorldCoordinates>().Origin;
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-            if (!Application.IsPlaying(gameObject))
-            {
-                DeserializeGeoJson();
-            }
-        }
         private void DeserializeGeoJson()
         {
             var geoJSON = new GeoJSONObject(geoJsonFile.text);
@@ -44,14 +36,6 @@ namespace GeoJsonCityBuilder
                 where featureTypeFilter == "" || feature.Properties.Type == featureTypeFilter
                 select feature.Geometry as PointGeometry;
             m_geometries = filteredGeometries.ToList();
-        }
-
-        void DeserializeGeoJsonIfNecessary()
-        {
-            if (m_geometries == null)
-            {
-                DeserializeGeoJson();
-            }
         }
 
         public void RemoveAllChildren()
