@@ -20,6 +20,9 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty sideMaterial3;
         SerializedProperty sideMaterial4;
         SerializedProperty sideMaterial5;
+        SerializedProperty sideMaterial6;
+        SerializedProperty sideMaterial7;
+        SerializedProperty sideMaterial8;
         SerializedProperty sideUvUnwrapSettings;
 
         SerializedProperty bottomMaterial;
