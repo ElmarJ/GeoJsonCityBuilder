@@ -35,6 +35,12 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(sideMaterial);
             EditorGUILayout.PropertyField(sideUvUnwrapSettings);
             EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Draw"))
+            {
+                var controller = this.serializedObject.targetObject as BlockFromFeature;
+
+                controller.Draw();
+            }
             if (GUILayout.Button("Add Rooftop"))
             {
                 var controller = this.serializedObject.targetObject as BlockFromFeature;
