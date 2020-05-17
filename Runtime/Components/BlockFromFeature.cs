@@ -6,6 +6,8 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace GeoJsonCityBuilder
 {
+    [RequireComponent(typeof(ProBuilderMesh))]
+    [RequireComponent(typeof(MeshCollider))]
     public class BlockFromFeature : MonoBehaviour
     {
         public IList<Vector3> floor;
@@ -30,11 +32,7 @@ namespace GeoJsonCityBuilder
 
         public void Draw()
         {
-            var mesh = gameObject.AddComponent<ProBuilderMesh>();
-            if (gameObject.GetComponent<MeshCollider>() == null)
-            {
-                gameObject.AddComponent<MeshCollider>();
-            }
+            var mesh = gameObject.GetComponent<ProBuilderMesh>();
 
             var first = floor.First();
             var last = floor.Last();
