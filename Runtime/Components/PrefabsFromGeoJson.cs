@@ -71,7 +71,7 @@ namespace GeoJsonCityBuilder
 
                 positionComponent.Recalculate();
 
-                go.transform.Rotate(0f, Random.RandomRange(0f, 360f), 0, Space.Self);
+                go.transform.Rotate(0f, Random.Range(0f, 360f), 0, Space.Self);
             }
         }
     }
