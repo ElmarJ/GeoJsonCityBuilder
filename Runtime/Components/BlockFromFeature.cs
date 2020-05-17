@@ -91,14 +91,14 @@ namespace GeoJsonCityBuilder
                 return;
             }
 
-            fourSides = true;
+            this.fourSides = true;
             float shortestDistance = 0f;
 
 
             // find shortest side:
             foreach (var wingedEdge in wingedEdges)
             {
-                var vertices = pb.GetVertices(new List<int>() {wingedEdge.edge.common.a, wingedEdge.edge.common.b});
+                var vertices = pb.GetVertices(new List<int>() {wingedEdge.edge.local.a, wingedEdge.edge.local.b});
                 var edgeLength = Vector3.Distance(vertices[0].position, vertices[1].position);
                 if (shortestDistance == 0 || edgeLength < shortestDistance) {
                     shortestDistance = edgeLength;
