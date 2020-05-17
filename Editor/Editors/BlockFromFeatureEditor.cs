@@ -8,7 +8,7 @@ namespace GeoJsonCityBuilder.Editor
 
     [CustomEditor(typeof(BlockFromFeature))]
     [CanEditMultipleObjects]
-    public class BlockFromFeatureJsonEditor : UnityEditor.Editor
+    public class BlockFromFeatureEditor : UnityEditor.Editor
     {
         SerializedProperty topMaterial;
         SerializedProperty bottomMaterial;
@@ -17,6 +17,7 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty sideUvUnwrapSettings;
         SerializedProperty pointedRoof;
         SerializedProperty pointedRoofHeight;
+        SerializedProperty leanForward;
 
 
         void OnEnable()
@@ -28,6 +29,7 @@ namespace GeoJsonCityBuilder.Editor
             height = serializedObject.FindProperty("height");
             pointedRoof = serializedObject.FindProperty("pointedRoof");
             pointedRoofHeight = serializedObject.FindProperty("pointedRoofHeight");
+            leanForward = serializedObject.FindProperty("leanForward");
         }
 
         public override void OnInspectorGUI()
@@ -43,6 +45,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(sideUvUnwrapSettings);
             EditorGUILayout.PropertyField(pointedRoof);
             EditorGUILayout.PropertyField(pointedRoofHeight);
+            EditorGUILayout.PropertyField(leanForward);
             if (controller.floor != null) {
                 EditorGUILayout.BeginFoldoutHeaderGroup(false, "Polygon");
                 foreach(var coordinate in (this.serializedObject.targetObject as BlockFromFeature).floor)
@@ -60,10 +63,6 @@ namespace GeoJsonCityBuilder.Editor
             if (GUILayout.Button("Draw"))
             {
                 controller.Draw();
-            }
-            if (GUILayout.Button("Add Rooftop"))
-            {
-                controller.AddPointedRoof();
             }
             EditorGUILayout.EndHorizontal();
             serializedObject.ApplyModifiedProperties();
