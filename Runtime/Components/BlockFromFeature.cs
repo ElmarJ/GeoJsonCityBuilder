@@ -23,7 +23,10 @@ namespace GeoJsonCityBuilder
         public float leanForward = 0f;
 
         Edge shortestEdge = new Edge();
+        Edge shortestEdgeWall = new Edge();
         Edge oppositeEdge = new Edge();
+        Edge oppositeEdgeWall = new Edge();
+
         bool fourSides = false;
 
         public AutoUnwrapSettings sideUvUnwrapSettings = new AutoUnwrapSettings();
@@ -131,6 +134,10 @@ namespace GeoJsonCityBuilder
                 var newEdge = connectResult.item2[0];
                 var extrudedEdges = pb.Extrude(new Edge[] {newEdge}, 0f, false, true);           
                 pb.TranslateVertices(connectResult.item2, new Vector3(0f, pointedRoofHeight, 0f));
+
+                VertexEditing.SplitVertices(pb, connectResult.item2[0]);
+                pb.TranslateVertices(new Edge[] {shortestEdgeWall, oppositeEdgeWall}, new Vector3(0f, pointedRoofHeight, 0f));
+
                 pb.ToMesh();
                 pb.Refresh();
             }
