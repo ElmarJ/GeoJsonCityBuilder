@@ -6,7 +6,10 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace GeoJsonCityBuilder
 {
-    [RequireComponent(typeof(ProBuilderMesh))]
+    // Require removed, because it caused a build-error
+    //   (build apparently tries to remove all
+    //    components without checking component-dependencies)
+    // [RequireComponent(typeof(ProBuilderMesh))]
     [RequireComponent(typeof(MeshCollider))]
     public class BlockFromFeature : MonoBehaviour
     {
