@@ -39,6 +39,9 @@ namespace GeoJsonCityBuilder
         public void Draw()
         {
             var mesh = gameObject.GetComponent<ProBuilderMesh>();
+            if (mesh == null) {
+                mesh = gameObject.AddComponent<ProBuilderMesh>();
+            }
 
             var first = floor.First();
             var last = floor.Last();
