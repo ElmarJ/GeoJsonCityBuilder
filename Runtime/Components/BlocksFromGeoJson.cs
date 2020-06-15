@@ -21,6 +21,7 @@ namespace GeoJsonCityBuilder
         public Material bottomMaterial;
         public AutoUnwrapSettings sideUvUnwrapSettings = new AutoUnwrapSettings();
         public bool pointedRoofTops = false;
+        public bool raiseFacades = false;
 
         Coordinate m_origin;
         List<Feature> m_features;
@@ -93,6 +94,7 @@ namespace GeoJsonCityBuilder
                 controller.bottomMaterial = bottomMaterial;
                 controller.sideUvUnwrapSettings = sideUvUnwrapSettings;
                 controller.pointedRoof = pointedRoofTops;
+                controller.raiseFrontAndBackFacadeTop = raiseFacades;
 
                 controller.floor = new List<Vector3>(from coor in geometry.Coordinates[0] select new Vector3(coor.ToLocalGrid(m_origin).x, 0, coor.ToLocalGrid(m_origin).y));
 

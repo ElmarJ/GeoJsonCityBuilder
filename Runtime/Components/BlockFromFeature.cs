@@ -6,8 +6,8 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace GeoJsonCityBuilder
 {
-    // Require removed, because it caused a build-error
-    //   (build apparently tries to remove all
+    // Require removed, because it caused a Unity build-error
+    //   with HDRP (build apparently tries to remove all
     //    components without checking component-dependencies)
     // [RequireComponent(typeof(ProBuilderMesh))]
     [RequireComponent(typeof(MeshCollider))]
@@ -22,13 +22,17 @@ namespace GeoJsonCityBuilder
 
         public bool pointedRoof = false;
         public float pointedRoofHeight = 3f;
-
+        public bool raiseFrontAndBackFacadeTop = false;
         public float leanForward = 0f;
-
-        Edge shortestEdge = new Edge();
-        Edge shortestEdgeWall = new Edge();
-        Edge oppositeEdge = new Edge();
-        Edge oppositeEdgeWall = new Edge();
+        Face topFace;
+        Face frontFace;
+        Face backFace;
+        Edge topFaceShortestEdge = new Edge();
+        Edge topFaceShortestEdgeCommon = new Edge();
+        Edge topFaceOppositeEdge = new Edge();
+        Edge topFaceOppositeEdgeCommon = new Edge();
+        Edge frontFaceTopEdge = new Edge();
+        Edge backFaceTopEdge = new Edge();
 
         bool fourSides = false;
 
@@ -91,11 +95,11 @@ namespace GeoJsonCityBuilder
                 return;
             }
 
-            var topFace = pb.faces[0];
-            var wingedEdges = WingedEdge.GetWingedEdges(pb, new Face[] {topFace}, false);
+            this.topFace = pb.faces[0];
+            var topWingedEdges = WingedEdge.GetWingedEdges(pb, new Face[] {this.topFace}, false);
 
             // For now, this only works on blocks with a building with 4 sides.
-            if (topFace.edges.Count != 4)
+            if (this.topFace.edges.Count != 4)
             {
                 return;
             }
@@ -103,27 +107,41 @@ namespace GeoJsonCityBuilder
             this.fourSides = true;
             float shortestDistance = 0f;
 
-
             // find shortest side:
-            foreach (var wingedEdge in wingedEdges)
+            foreach (var wingedEdge in topWingedEdges)
             {
                 var vertices = pb.GetVertices(new List<int>() {wingedEdge.edge.local.a, wingedEdge.edge.local.b});
                 var edgeLength = Vector3.Distance(vertices[0].position, vertices[1].position);
                 if (shortestDistance == 0 || edgeLength < shortestDistance) {
                     shortestDistance = edgeLength;
-                    shortestEdge = wingedEdge.edge.local;
+                    this.topFaceShortestEdge = wingedEdge.edge.local;
+                    this.topFaceShortestEdgeCommon = wingedEdge.edge.common;
                 }
             }
 
+
             // search the opposite edge (i.e. the edge that shares no corners / vertices with the shortest edge)
-            foreach (var wingedEdge in wingedEdges)
+            foreach (var wingedEdge in topWingedEdges)
             {
                 var edge = wingedEdge.edge.local;
 
-                if (edge.a != shortestEdge.a && edge.a != shortestEdge.b && edge.b != shortestEdge.a && edge.b != shortestEdge.b)
+                if (edge.a != this.topFaceShortestEdge.a && edge.a != this.topFaceShortestEdge.b && edge.b != this.topFaceShortestEdge.a && edge.b != this.topFaceShortestEdge.b)
                 {
-                    oppositeEdge = edge;
+                    this.topFaceOppositeEdge = edge;
+                    this.topFaceOppositeEdgeCommon = wingedEdge.edge.common;
                     break;
+                }
+            }
+
+            var wingedEdges = WingedEdge.GetWingedEdges(pb, pb.faces, false);
+            foreach (var wingedEdge in wingedEdges) {
+                if (wingedEdge.edge.common == topFaceShortestEdgeCommon && wingedEdge.face != topFace) {
+                    this.frontFace = wingedEdge.face;
+                    this.frontFaceTopEdge = wingedEdge.edge.local;
+                }
+                if (wingedEdge.edge.common == topFaceOppositeEdgeCommon && wingedEdge.face != topFace) {
+                    this.backFace = wingedEdge.face;
+                    this.backFaceTopEdge = wingedEdge.edge.local;
                 }
             }
         }
@@ -136,13 +154,20 @@ namespace GeoJsonCityBuilder
             }
 
             try {
-                var connectResult = pb.Connect(new Edge[] {shortestEdge, oppositeEdge});
+                // Optionally, pull up back and front facades:
+                if (this.raiseFrontAndBackFacadeTop) {
+                    VertexEditing.SplitVertices(pb, this.frontFaceTopEdge);
+                    VertexEditing.SplitVertices(pb, this.backFaceTopEdge);
+                    pb.TranslateVertices(new Edge[] {this.frontFaceTopEdge, this.backFaceTopEdge}, new Vector3(0f, pointedRoofHeight, 0f));
+                }
+                
+                // Draw new top-ridge as edge connecting center shortest side and its opposite side
+                var connectResult = pb.Connect(new Edge[] {this.topFaceShortestEdge, this.topFaceOppositeEdge});
                 var newEdge = connectResult.item2[0];
+
+                // Pull this new edge up:
                 var extrudedEdges = pb.Extrude(new Edge[] {newEdge}, 0f, false, true);           
                 pb.TranslateVertices(connectResult.item2, new Vector3(0f, pointedRoofHeight, 0f));
-
-                VertexEditing.SplitVertices(pb, connectResult.item2[0]);
-                pb.TranslateVertices(new Edge[] {shortestEdgeWall, oppositeEdgeWall}, new Vector3(0f, pointedRoofHeight, 0f));
 
                 pb.ToMesh();
                 pb.Refresh();
@@ -159,8 +184,8 @@ namespace GeoJsonCityBuilder
                 return;
             }
 
-            LeanForwardFromTopEdge(shortestEdge);
-            LeanForwardFromTopEdge(oppositeEdge);
+            LeanForwardFromTopEdge(this.topFaceShortestEdgeCommon);
+            LeanForwardFromTopEdge(this.topFaceOppositeEdgeCommon);
         }
 
         public void LeanForwardFromTopEdge(Edge edge)
@@ -170,7 +195,7 @@ namespace GeoJsonCityBuilder
             var dist = vector.magnitude;
             var transform = new Vector3(vector.z * leanForward / vector.magnitude, 0, vector.x * leanForward / vector.magnitude);
 
-            pb.TranslateVertices(new List<Edge>(){shortestEdge}, transform);
+            pb.TranslateVertices(new List<Edge>(){this.topFaceShortestEdge}, transform);
             pb.ToMesh();
             pb.Refresh();
         }

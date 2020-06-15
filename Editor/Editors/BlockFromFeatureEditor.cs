@@ -18,6 +18,7 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty pointedRoof;
         SerializedProperty pointedRoofHeight;
         SerializedProperty leanForward;
+        SerializedProperty raiseFrontAndBackFacadeTop;
 
 
         void OnEnable()
@@ -30,6 +31,7 @@ namespace GeoJsonCityBuilder.Editor
             pointedRoof = serializedObject.FindProperty("pointedRoof");
             pointedRoofHeight = serializedObject.FindProperty("pointedRoofHeight");
             leanForward = serializedObject.FindProperty("leanForward");
+            raiseFrontAndBackFacadeTop = serializedObject.FindProperty("raiseFrontAndBackFacadeTop");
         }
 
         public override void OnInspectorGUI()
@@ -45,6 +47,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(sideUvUnwrapSettings);
             EditorGUILayout.PropertyField(pointedRoof);
             EditorGUILayout.PropertyField(pointedRoofHeight);
+            EditorGUILayout.PropertyField(raiseFrontAndBackFacadeTop);
             EditorGUILayout.PropertyField(leanForward);
             if (controller.floor != null) {
                 EditorGUILayout.BeginFoldoutHeaderGroup(false, "Polygon");

@@ -20,6 +20,7 @@ namespace GeoJsonCityBuilder.Editor
 
         SerializedProperty bottomMaterial;
         SerializedProperty pointedRoofTops;
+        SerializedProperty raiseFacades;
 
         void OnEnable()
         {
@@ -32,6 +33,7 @@ namespace GeoJsonCityBuilder.Editor
             sideUvUnwrapSettings = serializedObject.FindProperty("sideUvUnwrapSettings");
             bottomMaterial = serializedObject.FindProperty("bottomMaterial");
             pointedRoofTops = serializedObject.FindProperty("pointedRoofTops");
+            raiseFacades = serializedObject.FindProperty("raiseFacades");
         }
 
         public override void OnInspectorGUI()
@@ -43,6 +45,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(heightMin);
             EditorGUILayout.PropertyField(heightMax);
             EditorGUILayout.PropertyField(pointedRoofTops);
+            EditorGUILayout.PropertyField(raiseFacades);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(sideMaterials, true);
             EditorGUILayout.PropertyField(sideUvUnwrapSettings);
