@@ -85,6 +85,7 @@ namespace GeoJsonCityBuilder
 
                 var block = new GameObject(featureTypeFilter + i++.ToString());
                 block.transform.parent = transform;
+                block.transform.position = transform.position;
 
                 var controller = block.AddComponent<BlockFromFeature>();
                 controller.height = feature.Properties.Height == null || feature.Properties.Height == 0 ? Random.Range(heightMin, heightMax) : feature.Properties.Height.Value;
