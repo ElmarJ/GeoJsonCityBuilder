@@ -22,6 +22,8 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty pointedRoofTops;
         SerializedProperty raiseFacades;
 
+        BlocksFromGeoJsonBuilder builder;
+
         void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
@@ -34,6 +36,8 @@ namespace GeoJsonCityBuilder.Editor
             bottomMaterial = serializedObject.FindProperty("bottomMaterial");
             pointedRoofTops = serializedObject.FindProperty("pointedRoofTops");
             raiseFacades = serializedObject.FindProperty("raiseFacades");
+
+            builder = new BlocksFromGeoJsonBuilder(this.serializedObject.targetObject as BlocksFromGeoJson);
         }
 
         public override void OnInspectorGUI()
@@ -53,15 +57,11 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
             {
-                var controller = this.serializedObject.targetObject as BlocksFromGeoJson;
-
-                controller.RemoveAllChildren();
+                this.builder.RemoveAllChildren();
             }
             if (GUILayout.Button("Generate"))
             {
-                var controller = this.serializedObject.targetObject as BlocksFromGeoJson;
-
-                controller.Rebuild();
+                this.builder.Rebuild();
             }
             EditorGUILayout.EndHorizontal();
             serializedObject.ApplyModifiedProperties();

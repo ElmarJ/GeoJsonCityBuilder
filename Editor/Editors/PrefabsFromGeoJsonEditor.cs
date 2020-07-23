@@ -13,11 +13,15 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty featureTypeFilter;
         SerializedProperty prefab;
 
+        PrefabsFromGeoJsonBuilder builder;
+
         void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
             featureTypeFilter = serializedObject.FindProperty("featureTypeFilter");
             prefab = serializedObject.FindProperty("prefab");
+
+            builder = new PrefabsFromGeoJsonBuilder(this.serializedObject.targetObject as PrefabsFromGeoJson);
         }
 
         public override void OnInspectorGUI()
@@ -29,15 +33,11 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
             {
-                var controller = this.serializedObject.targetObject as PrefabsFromGeoJson;
-
-                controller.RemoveAllChildren();
+                builder.RemoveAllChildren();
             }
             if (GUILayout.Button("Generate"))
             {
-                var controller = this.serializedObject.targetObject as PrefabsFromGeoJson;
-
-                controller.Rebuild();
+                builder.Rebuild();
             }
             EditorGUILayout.EndHorizontal();
             serializedObject.ApplyModifiedProperties();
