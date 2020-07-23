@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace GeoJsonCityBuilder.Editor
 {
 
-    [CustomEditor(typeof(BlockFromFeature))]
+    [CustomEditor(typeof(BlockFromPolygon))]
     [CanEditMultipleObjects]
-    public class BlockFromFeatureEditor : UnityEditor.Editor
+    public class BlockFromPolygonEditor : UnityEditor.Editor
     {
         SerializedProperty topMaterial;
         SerializedProperty bottomMaterial;
@@ -36,9 +36,10 @@ namespace GeoJsonCityBuilder.Editor
 
         public override void OnInspectorGUI()
         {
-            var controller = this.serializedObject.targetObject as BlockFromFeature;
+            var controller = this.serializedObject.targetObject as BlockFromPolygon;
 
             serializedObject.Update();
+
             EditorGUILayout.PropertyField(height);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(topMaterial);
@@ -49,14 +50,16 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(pointedRoofHeight);
             EditorGUILayout.PropertyField(raiseFrontAndBackFacadeTop);
             EditorGUILayout.PropertyField(leanForward);
-            if (controller.floor != null) {
+
+            if (controller.floorPolygon != null) {
                 EditorGUILayout.BeginFoldoutHeaderGroup(false, "Polygon");
-                foreach(var coordinate in (this.serializedObject.targetObject as BlockFromFeature).floor)
+                foreach(var coordinate in (this.serializedObject.targetObject as BlockFromPolygon).floorPolygon)
                 {
                     EditorGUILayout.LabelField(coordinate.ToString());
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
+
             // EditorGUILayout.PropertyField(floor);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Set Test Floor"))
@@ -65,16 +68,17 @@ namespace GeoJsonCityBuilder.Editor
             }
             if (GUILayout.Button("Draw"))
             {
-                controller.Draw();
+                var builder = new BlockFromPolygonBuilder(controller);
+                builder.Draw();
             }
             EditorGUILayout.EndHorizontal();
             serializedObject.ApplyModifiedProperties();
         }
 
         private void CreateTestFloor() {
-            var controller = this.target as BlockFromFeature;
+            var controller = this.target as BlockFromPolygon;
 
-            controller.floor = new List<Vector3>() {
+            controller.floorPolygon = new List<Vector3>() {
                 new Vector3( 5f, 0f, 10f),
                 new Vector3(-5f, 0f, 10f),
                 new Vector3(-5f, 0f,-10f),
