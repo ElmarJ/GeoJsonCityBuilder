@@ -1,4 +1,7 @@
 # GeoJsonCityBuilder
+![OpenUPM version](https://img.shields.io/npm/v/nl.elmarjansen.geojsoncitybuilder?label=openupm&registry_uri=https://package.openupm.com)
+![GitHub issues](https://img.shields.io/github/issues/elmarj/GeoJsonCityBuilder)
+
 Unity Package to recreate a 3D-city from a geojson file. Currently allows to create extruded objects (e.g. buildings) from polygons and to place prefabs on points.
 
 See for an example on what can be achieved and how to use it, the [Waterlooplein 3D project](https://github.com/ElmarJ/Waterlooplein3D).
@@ -26,7 +29,7 @@ See for an example on what can be achieved and how to use it, the [Waterlooplein
  2. Click Add Component and add Scripts/GeoJsonCityBuilder/Position on World Coordinates
  3. Set the desired Lat/Long-coordinates for the Unity world origin in the "Position on World Coordinates" component (choose a location central to the area that you want to reconstruct).
  4. Click Add Component and add Scripts/GeoJsonCityBuilder/Blocks From Geo Json
- 5. Drag your geojson-file into "Geo Json File" (make sure it has a ".json"-extension; ".geojson" will not work)
+ 5. Drag your geojson-file into "Geo Json File". Make sure it has a ".json"-extension; ".geojson" will not work)
  6. Set other settings and materials
  7. Click Generate
 
@@ -36,7 +39,7 @@ See for an example on what can be achieved and how to use it, the [Waterlooplein
  2. Click Add Component and add Scripts/GeoJsonCityBuilder/Position on World Coordinates
  3. Set the desired Lat/Long-coordinates for the Unity world origin in the "Position on World Coordinates" component (choose a location central to the area that you want to reconstruct).
  4. Click Add Component and add Scripts/GeoJsonCityBuilder/Blocks From Geo Json
- 5. Drag your geojson-file into "Geo Json File" (make sure it has a ".json"-extension; ".geojson" will not work)
+ 5. Drag your geojson-file into "Geo Json File". Make sure it has a ".json"-extension; ".geojson" will not work)
  6. Drag your prefab into "Prefab"
  7. Click Generate
 
