@@ -36,7 +36,7 @@ openupm add nl.elmarjansen.geojsoncitybuilder
  6. Set other settings and materials
  7. Click Generate
 
-### Prefabse from geojson polygons
+### Prefabs from geojson polygons
  
  1. Create an empty GameObject
  2. Click Add Component and add Scripts/GeoJsonCityBuilder/Position on World Coordinates
