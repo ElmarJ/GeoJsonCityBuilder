@@ -22,7 +22,7 @@ openupm add nl.elmarjansen.geojsoncitybuilder
 
 1. Click Window -> Package Manager
 2. Click + -> Add Package from git URL
-3. Fill in "https://github.com/ElmarJ/GeoJsonCityBuilder" and click Add
+3. Type _https://github.com/ElmarJ/GeoJsonCityBuilder_ and click Add
 
 ## Usage
 
