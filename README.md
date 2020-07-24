@@ -8,18 +8,21 @@ See for an example on what can be achieved and how to use it, the [Waterlooplein
 
 ## Installation
 
-- Option 1: Through [OpenUPM listing](https://openupm.com/packages/nl.elmarjansen.geojsoncitybuilder/#):
+### Option 1: Through OpenUPM
 
-    ```
-    npm install -g openupm-cli
-    cd YOUR_UNITY_PROJECT_FOLDER
-    openupm add nl.elmarjansen.geojsoncitybuilder
-    ```
+This package is [listed in the OpenUPM repository](https://openupm.com/packages/nl.elmarjansen.geojsoncitybuilder/#). Installation:
 
-- Option 2: As a git-link in Unity package manager:
-    1. Click Window -> Package Manager
-    2. Click + -> Add Package from git URL
-    3. Fill in "https://github.com/ElmarJ/GeoJsonCityBuilder" and click Add
+```
+npm install -g openupm-cli
+cd YOUR_UNITY_PROJECT_FOLDER
+openupm add nl.elmarjansen.geojsoncitybuilder
+```
+
+### Option 2: As a git-link in Unity package manager
+
+1. Click Window -> Package Manager
+2. Click + -> Add Package from git URL
+3. Type _https://github.com/ElmarJ/GeoJsonCityBuilder_ and click Add
 
 ## Usage
 
@@ -33,7 +36,7 @@ See for an example on what can be achieved and how to use it, the [Waterlooplein
  6. Set other settings and materials
  7. Click Generate
 
-### Prefabse from geojson polygons
+### Prefabs from geojson polygons
  
  1. Create an empty GameObject
  2. Click Add Component and add Scripts/GeoJsonCityBuilder/Position on World Coordinates
@@ -43,3 +46,6 @@ See for an example on what can be achieved and how to use it, the [Waterlooplein
  6. Drag your prefab into "Prefab"
  7. Click Generate
 
+## Open source credits
+
+This package makes use of the [JSONObject library by Matt Schoen](https://github.com/mtschoen/JSONObject)
