@@ -1,6 +1,6 @@
 {
   "name": "nl.elmarjansen.geojsoncitybuilder",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "GeoJSON City Builder",
   "description": "Unity Package to recreate a 3d-city from a specially crafted geojson file.",
   "unity": "2019.1",
