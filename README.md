@@ -46,3 +46,6 @@ openupm add nl.elmarjansen.geojsoncitybuilder
  6. Drag your prefab into "Prefab"
  7. Click Generate
 
+## Open source credits
+
+This package makes use of the [JSONObject library by Matt Schoen](https://github.com/mtschoen/JSONObject)
