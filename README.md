@@ -8,7 +8,9 @@ See for an example on what can be achieved and how to use it, the [Waterlooplein
 
 ## Installation
 
-### Option 1: Through [OpenUPM listing](https://openupm.com/packages/nl.elmarjansen.geojsoncitybuilder/#)
+### Option 1: Through OpenUPM
+
+This package is [listed in the OpenUPM repository](https://openupm.com/packages/nl.elmarjansen.geojsoncitybuilder/#). Installation:
 
 ```
 npm install -g openupm-cli
