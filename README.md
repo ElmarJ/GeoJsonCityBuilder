@@ -8,18 +8,19 @@ See for an example on what can be achieved and how to use it, the [Waterlooplein
 
 ## Installation
 
-- Option 1: Through [OpenUPM listing](https://openupm.com/packages/nl.elmarjansen.geojsoncitybuilder/#):
+### Option 1: Through [OpenUPM listing](https://openupm.com/packages/nl.elmarjansen.geojsoncitybuilder/#)
 
-    ```
-    npm install -g openupm-cli
-    cd YOUR_UNITY_PROJECT_FOLDER
-    openupm add nl.elmarjansen.geojsoncitybuilder
-    ```
+```
+npm install -g openupm-cli
+cd YOUR_UNITY_PROJECT_FOLDER
+openupm add nl.elmarjansen.geojsoncitybuilder
+```
 
-- Option 2: As a git-link in Unity package manager:
-    1. Click Window -> Package Manager
-    2. Click + -> Add Package from git URL
-    3. Fill in "https://github.com/ElmarJ/GeoJsonCityBuilder" and click Add
+### Option 2: As a git-link in Unity package manager
+
+1. Click Window -> Package Manager
+2. Click + -> Add Package from git URL
+3. Fill in "https://github.com/ElmarJ/GeoJsonCityBuilder" and click Add
 
 ## Usage
 
