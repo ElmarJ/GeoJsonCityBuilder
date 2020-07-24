@@ -1,0 +1,3 @@
+[submodule "Data/External/JSONObject"]
+	path = Data/External/JSONObject
+	url = https://github.com/mtschoen/JSONObject
