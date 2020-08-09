@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 using System.Linq;
+using GeoJsonCityBuilder.Data;
 using GeoJsonCityBuilder.Data.GeoJSON;
 using UnityEditor;
 using UnityEngine;
