@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using GeoJsonCityBuilder.Data.GeoJSON;
+using GeoJsonCityBuilder.Data;
 using UnityEngine;
 
 namespace GeoJsonCityBuilder

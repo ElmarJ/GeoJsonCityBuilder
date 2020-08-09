@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace GeoJsonCityBuilder.Data.GeoJSON {
+namespace GeoJsonCityBuilder.Data {
     [Serializable]
     public class Coordinate
     {
