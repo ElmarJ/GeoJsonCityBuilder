@@ -54,6 +54,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(sideMaterials, true);
             EditorGUILayout.PropertyField(sideUvUnwrapSettings);
             EditorGUILayout.PropertyField(bottomMaterial);
+            EditorGUILayout.PropertyField(topMaterial);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
             {
