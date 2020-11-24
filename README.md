@@ -32,7 +32,7 @@ openupm add nl.elmarjansen.geojsoncitybuilder
  2. Click Add Component and add Scripts/GeoJsonCityBuilder/Position on World Coordinates
  3. Set the desired Lat/Long-coordinates for the Unity world origin in the "Position on World Coordinates" component (choose a location central to the area that you want to reconstruct).
  4. Click Add Component and add Scripts/GeoJsonCityBuilder/Blocks From Geo Json
- 5. Drag your geojson-file into "Geo Json File". Make sure it has a ".json"-extension; ".geojson" will not work)
+ 5. Drag your geojson-file into "Geo Json File". Make sure it has a ".json"-extension; ".geojson" will not work.
  6. Set other settings and materials
  7. Click Generate
 
