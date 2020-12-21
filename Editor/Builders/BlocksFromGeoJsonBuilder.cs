@@ -79,9 +79,13 @@ namespace GeoJsonCityBuilder.Editor
                 block.transform.parent = this.Component.transform;
                 block.transform.position = this.Component.transform.position;
 
+                var existenceController = block.AddComponent<ExistenceController>();
+                existenceController.existencePeriodStart = feature.Properties.ExistencePeriodStartYear ?? -9999;
+                existenceController.existencePeriodEnd = feature.Properties.ExistencePeriodEndYear ?? 9999;
+
                 var controller = block.AddComponent<BlockFromPolygon>();
                 controller.height = feature.Properties.Height == null || feature.Properties.Height == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : feature.Properties.Height.Value;
-                
+
                 controller.sideMaterial = this.Component.sideMaterials[Random.Range(0, this.Component.sideMaterials.Count)];
                 controller.topMaterial = this.Component.topMaterial;
                 controller.bottomMaterial = this.Component.bottomMaterial;
