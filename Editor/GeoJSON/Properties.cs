@@ -7,5 +7,8 @@ namespace GeoJsonCityBuilder.Data.GeoJSON {
     {
         public string Type { get; set; }
         public float? Height { get; set; }
+
+        public long? ExistencePeriodStartYear { get; set; }
+        public long? ExistencePeriodEndYear { get; set; }
     }
 }

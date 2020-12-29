@@ -29,6 +29,8 @@ namespace GeoJsonCityBuilder.Data.GeoJSON
                 feature.Type = jsonFeature["type"].str;
                 feature.Properties.Type = jsonFeature["properties"]["type"]?.str;
                 feature.Properties.Height = jsonFeature["properties"]["height"]?.f;
+                feature.Properties.ExistencePeriodStartYear = jsonFeature["properties"]["exist_period_start"]?.i;
+                feature.Properties.ExistencePeriodEndYear = jsonFeature["properties"]["exist_period_start"]?.i;
 
                 var geometryType = jsonFeature["geometry"]["type"];
 
