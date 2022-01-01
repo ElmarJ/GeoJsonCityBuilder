@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-
 using System.Linq;
 using GeoJsonCityBuilder.Data;
 using UnityEngine;
@@ -7,7 +6,6 @@ using UnityEngine.ProBuilder;
 
 namespace GeoJsonCityBuilder
 {
-
     [ExecuteAlways]
     [RequireComponent(typeof(PositionOnWorldCoordinates))]
     public class BlocksFromGeoJson : MonoBehaviour

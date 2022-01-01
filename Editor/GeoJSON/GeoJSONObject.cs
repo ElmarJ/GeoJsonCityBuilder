@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GeoJsonCityBuilder.Data.GeoJSON;
+using System.Linq;
 
 namespace GeoJsonCityBuilder.Data.GeoJSON
 {
@@ -19,14 +20,17 @@ namespace GeoJsonCityBuilder.Data.GeoJSON
 
         private static FeatureCollection DeserializeGeoJSON(JSONObject jsonFeatureCollection)
         {
-            var featureCollection = new FeatureCollection();
-            featureCollection.Type = jsonFeatureCollection["type"].ToString();
+            var featureCollection = new FeatureCollection
+            {
+                Type = jsonFeatureCollection["type"].ToString()
+            };
 
             foreach (var jsonFeature in jsonFeatureCollection["features"].list)
             {
-                var feature = new Feature();
-
-                feature.Type = jsonFeature["type"].str;
+                var feature = new Feature
+                {
+                    Type = jsonFeature["type"].str
+                };
                 feature.Properties.Type = jsonFeature["properties"]["type"]?.str;
                 feature.Properties.Height = jsonFeature["properties"]["height"]?.f;
                 feature.Properties.ExistencePeriodStartYear = jsonFeature["properties"]["exist_period_start"]?.i;
@@ -34,29 +38,13 @@ namespace GeoJsonCityBuilder.Data.GeoJSON
 
                 var geometryType = jsonFeature["geometry"]["type"];
 
-
-                if (geometryType.str == "Polygon")
+                feature.Geometry = geometryType.str switch
                 {
-                    feature.Geometry = ParsePolygonGeometry(jsonFeature["geometry"]["coordinates"].list);
-                }
-
-                if (geometryType.str == "MultiPolygon")
-                {
-                    feature.Geometry = ParseMultiPolygonGeometry(jsonFeature["geometry"]["coordinates"].list);
-                }
-
-
-                if (geometryType.str == "Point")
-                {
-                    var geometry = new PointGeometry();
-
-                    geometry.Coordinate = new Coordinate(
-                        jsonFeature["geometry"]["coordinates"][0].f,
-                        jsonFeature["geometry"]["coordinates"][1].f
-                    );
-
-                    feature.Geometry = geometry;
-                }
+                    "Polygon" => ParsePolygonGeometry(jsonFeature["geometry"]["coordinates"].list),
+                    "MultiPolygon" => ParseMultiPolygonGeometry(jsonFeature["geometry"]["coordinates"].list),
+                    "Point" => new PointGeometry{Coordinate = new Coordinate(jsonFeature["geometry"]["coordinates"][0].f, jsonFeature["geometry"]["coordinates"][1].f)},
+                    _ => null,
+                };
 
                 featureCollection.Features.Add(feature);
             }
@@ -64,35 +52,25 @@ namespace GeoJsonCityBuilder.Data.GeoJSON
             return featureCollection;
         }
 
-        private static PolygonGeometry ParsePolygonGeometry(List<JSONObject> jsonCoordinates)
+        private static PolygonGeometry ParsePolygonGeometry(List<JSONObject> jsonPolygons)
         {
             var geometry = new PolygonGeometry();
-
-            foreach (var jsonCoordinateList in jsonCoordinates)
-            {
-                var coordinateList = new List<Coordinate>();
-                foreach (var jsonCoordinate in jsonCoordinateList.list)
-                {
-                    var coordinate = new Coordinate(
-                        jsonCoordinate[0].f,
-                        jsonCoordinate[1].f
-                    );
-                    coordinateList.Add(coordinate);
-                }
-                geometry.Coordinates.Add(coordinateList);
-            }
-
+            geometry.Coordinates.AddRange(
+                from jsonPolygon in jsonPolygons
+                select (
+                    from jsonCoordinate in jsonPolygon.list
+                    select new Coordinate(jsonCoordinate[0].f, jsonCoordinate[1].f))
+                    .ToList()
+                );
             return geometry;
         }
 
         private static MultiPolygonGeometry ParseMultiPolygonGeometry(List<JSONObject> jsonCoordinates)
         {
             var geometry = new MultiPolygonGeometry();
-
-            foreach (var polygonCoordinates in jsonCoordinates)
-            {
-                geometry.Geometries.Add(ParsePolygonGeometry(polygonCoordinates.list));
-            }
+            geometry.Geometries.AddRange(
+                from polygonCoordinates in jsonCoordinates
+                select ParsePolygonGeometry(polygonCoordinates.list));
             return geometry;
         }
     }

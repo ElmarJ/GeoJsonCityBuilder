@@ -5,20 +5,10 @@ using UnityEngine;
 
 namespace GeoJsonCityBuilder
 {
-
     // [ExecuteInEditMode]
     public class PositionOnWorldCoordinates : MonoBehaviour
     {
-        // 52.367
-        // 4.905
-
         public Coordinate Origin;
-        private PositionOnWorldCoordinates parentComponent;
-
-
-        void Awake()
-        {
-        }
 
         // Start is called before the first frame update
         void Start()

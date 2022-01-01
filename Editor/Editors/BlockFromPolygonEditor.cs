@@ -51,9 +51,10 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(raiseFrontAndBackFacadeTop);
             EditorGUILayout.PropertyField(leanForward);
 
-            if (controller.floorPolygon != null) {
+            if (controller.floorPolygon != null)
+            {
                 EditorGUILayout.BeginFoldoutHeaderGroup(false, "Polygon");
-                foreach(var coordinate in (this.serializedObject.targetObject as BlockFromPolygon).floorPolygon)
+                foreach (var coordinate in (this.serializedObject.targetObject as BlockFromPolygon).floorPolygon)
                 {
                     EditorGUILayout.LabelField(coordinate.ToString());
                 }
@@ -75,7 +76,8 @@ namespace GeoJsonCityBuilder.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void CreateTestFloor() {
+        private void CreateTestFloor()
+        {
             var controller = this.target as BlockFromPolygon;
 
             controller.floorPolygon = new List<Vector3>() {

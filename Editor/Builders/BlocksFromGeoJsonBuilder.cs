@@ -8,9 +8,9 @@ using UnityEngine.ProBuilder;
 
 namespace GeoJsonCityBuilder.Editor
 {
-    public class BlocksFromGeoJsonBuilder {
-        
-        Coordinate m_origin;
+    public class BlocksFromGeoJsonBuilder
+    {
+        readonly Coordinate m_origin;
         List<Feature> m_features;
 
         public BlocksFromGeoJson Component { get; private set; }
@@ -21,29 +21,21 @@ namespace GeoJsonCityBuilder.Editor
             this.m_origin = Component.GetComponent<PositionOnWorldCoordinates>().Origin;
         }
 
-
-            private void DeserializeGeoJson()
+        private void DeserializeGeoJson()
         {
             var geoJSON = new GeoJSONObject(this.Component.geoJsonFile.text);
             var filteredFeatures =
                 from feature in geoJSON.FeatureCollection.Features
                 select feature;
-            
-            if (this.Component.featureTypeFilter != null && this.Component.featureTypeFilter != "") {
+
+            if (this.Component.featureTypeFilter != null && this.Component.featureTypeFilter != "")
+            {
                 filteredFeatures =
                     from feature in filteredFeatures
                     where feature.Properties.Type == this.Component.featureTypeFilter
                     select feature;
             }
             this.m_features = filteredFeatures.ToList();
-        }
-
-        void DeserializeGeoJsonIfNecessary()
-        {
-            if (this.m_features == null)
-            {
-                DeserializeGeoJson();
-            }
         }
 
         public void RemoveAllChildren()

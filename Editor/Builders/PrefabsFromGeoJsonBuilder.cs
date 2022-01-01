@@ -10,21 +10,19 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace GeoJsonCityBuilder.Editor
 {
-    public class PrefabsFromGeoJsonBuilder {
+    public class PrefabsFromGeoJsonBuilder
+    {
         public PrefabsFromGeoJson Component
         {
-            get; 
+            get;
             private set;
         }
 
-        Coordinate m_origin;
         List<PointGeometry> m_geometries;
 
         public PrefabsFromGeoJsonBuilder(PrefabsFromGeoJson component)
         {
             this.Component = component;
-            this.m_origin = component.GetComponent<PositionOnWorldCoordinates>().Origin;
-
         }
 
         private void DeserializeGeoJson()

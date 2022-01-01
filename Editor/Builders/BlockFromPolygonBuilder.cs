@@ -6,13 +6,11 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace GeoJsonCityBuilder.Editor
 {
-    public class BlockFromPolygonBuilder {
+    public class BlockFromPolygonBuilder
+    {
         public BlockFromPolygon BlockInfo { get; private set; }
-        public GameObject GameObject {get; private set; }
-
+        public GameObject GameObject { get; private set; }
         Face topFace;
-        Face frontFace;
-        Face backFace;
         Edge topFaceShortestEdge = new Edge();
         Edge topFaceShortestEdgeCommon = new Edge();
         Edge topFaceOppositeEdge = new Edge();
@@ -20,7 +18,7 @@ namespace GeoJsonCityBuilder.Editor
         Edge frontFaceTopEdge = new Edge();
         Edge backFaceTopEdge = new Edge();
 
-        public BlockFromPolygonBuilder (BlockFromPolygon blockInfo)
+        public BlockFromPolygonBuilder(BlockFromPolygon blockInfo)
         {
             this.BlockInfo = blockInfo;
             this.GameObject = blockInfo.gameObject;
@@ -32,7 +30,8 @@ namespace GeoJsonCityBuilder.Editor
         public void Draw()
         {
             var mesh = this.GameObject.GetComponent<ProBuilderMesh>();
-            if (mesh == null) {
+            if (mesh == null)
+            {
                 mesh = this.GameObject.AddComponent<ProBuilderMesh>();
             }
 
@@ -57,14 +56,14 @@ namespace GeoJsonCityBuilder.Editor
             foreach (var face in this.pb.faces)
             {
                 // Skip the bottom and ceiling face:
-                if (i>1)
+                if (i > 1)
                 {
                     face.uv = this.BlockInfo.sideUvUnwrapSettings;
                 }
                 i++;
             }
-                this.pb.ToMesh();
-                this.pb.Refresh();
+            this.pb.ToMesh();
+            this.pb.Refresh();
 
             this.FindSpecialSides();
 
@@ -74,7 +73,6 @@ namespace GeoJsonCityBuilder.Editor
             {
                 this.AddPointedRoof();
             }
-
         }
 
         public void FindSpecialSides()
@@ -85,7 +83,7 @@ namespace GeoJsonCityBuilder.Editor
             }
 
             this.topFace = this.pb.faces[0];
-            var topWingedEdges = WingedEdge.GetWingedEdges(this.pb, new Face[] {this.topFace}, false);
+            var topWingedEdges = WingedEdge.GetWingedEdges(this.pb, new Face[] { this.topFace }, false);
 
             // For now, this only works on blocks with a building with 4 sides.
             if (this.topFace.edges.Count != 4)
@@ -99,15 +97,15 @@ namespace GeoJsonCityBuilder.Editor
             // find shortest side:
             foreach (var wingedEdge in topWingedEdges)
             {
-                var vertices = this.pb.GetVertices(new List<int>() {wingedEdge.edge.local.a, wingedEdge.edge.local.b});
+                var vertices = this.pb.GetVertices(new List<int>() { wingedEdge.edge.local.a, wingedEdge.edge.local.b });
                 var edgeLength = Vector3.Distance(vertices[0].position, vertices[1].position);
-                if (shortestDistance == 0 || edgeLength < shortestDistance) {
+                if (shortestDistance == 0 || edgeLength < shortestDistance)
+                {
                     shortestDistance = edgeLength;
                     this.topFaceShortestEdge = wingedEdge.edge.local;
                     this.topFaceShortestEdgeCommon = wingedEdge.edge.common;
                 }
             }
-
 
             // search the opposite edge (i.e. the edge that shares no corners / vertices with the shortest edge)
             foreach (var wingedEdge in topWingedEdges)
@@ -123,50 +121,55 @@ namespace GeoJsonCityBuilder.Editor
             }
 
             var wingedEdges = WingedEdge.GetWingedEdges(this.pb, this.pb.faces, false);
-            foreach (var wingedEdge in wingedEdges) {
-                if (wingedEdge.edge.common == this.topFaceShortestEdgeCommon && wingedEdge.face != this.topFace) {
-                    this.frontFace = wingedEdge.face;
+            foreach (var wingedEdge in wingedEdges)
+            {
+                if (wingedEdge.edge.common == this.topFaceShortestEdgeCommon && wingedEdge.face != this.topFace)
+                {
                     this.frontFaceTopEdge = wingedEdge.edge.local;
                 }
-                if (wingedEdge.edge.common == this.topFaceOppositeEdgeCommon && wingedEdge.face != this.topFace) {
-                    this.backFace = wingedEdge.face;
+                if (wingedEdge.edge.common == this.topFaceOppositeEdgeCommon && wingedEdge.face != this.topFace)
+                {
                     this.backFaceTopEdge = wingedEdge.edge.local;
                 }
             }
         }
 
-
-        public void AddPointedRoof() {
+        public void AddPointedRoof()
+        {
             if (!this.fourSides)
             {
                 return;
             }
 
-            try {
+            try
+            {
                 // Optionally, pull up back and front facades:
-                if (this.BlockInfo.raiseFrontAndBackFacadeTop) {
+                if (this.BlockInfo.raiseFrontAndBackFacadeTop)
+                {
                     VertexEditing.SplitVertices(this.pb, this.frontFaceTopEdge);
                     VertexEditing.SplitVertices(this.pb, this.backFaceTopEdge);
-                    pb.TranslateVertices(new Edge[] {this.frontFaceTopEdge, this.backFaceTopEdge}, new Vector3(0f, this.BlockInfo.pointedRoofHeight, 0f));
+                    pb.TranslateVertices(new Edge[] { this.frontFaceTopEdge, this.backFaceTopEdge }, new Vector3(0f, this.BlockInfo.pointedRoofHeight, 0f));
                 }
-                
+
                 // Draw new top-ridge as edge connecting center shortest side and its opposite side
-                var connectResult = this.pb.Connect(new Edge[] {this.topFaceShortestEdge, this.topFaceOppositeEdge});
+                var connectResult = this.pb.Connect(new Edge[] { this.topFaceShortestEdge, this.topFaceOppositeEdge });
                 var newEdge = connectResult.item2[0];
 
                 // Pull this new edge up:
-                var extrudedEdges = this.pb.Extrude(new Edge[] {newEdge}, 0f, false, true);           
+                var extrudedEdges = this.pb.Extrude(new Edge[] { newEdge }, 0f, false, true);
                 this.pb.TranslateVertices(connectResult.item2, new Vector3(0f, this.BlockInfo.pointedRoofHeight, 0f));
 
                 this.pb.ToMesh();
                 this.pb.Refresh();
             }
-            catch (System.Exception) {
-                
+            catch (System.Exception)
+            {
+
             }
         }
 
-        public void LeanForward() {
+        public void LeanForward()
+        {
 
             if (!this.fourSides | this.BlockInfo.leanForward == 0)
             {
@@ -179,33 +182,13 @@ namespace GeoJsonCityBuilder.Editor
 
         public void LeanForwardFromTopEdge(Edge edge)
         {
-            var edgePoints = this.pb.GetVertices(new List<int>() {edge.a, edge.b});
+            var edgePoints = this.pb.GetVertices(new List<int>() { edge.a, edge.b });
             var vector = edgePoints[1].position - edgePoints[0].position;
-            var dist = vector.magnitude;
             var transform = new Vector3(vector.z * this.BlockInfo.leanForward / vector.magnitude, 0, vector.x * this.BlockInfo.leanForward / vector.magnitude);
 
-            pb.TranslateVertices(new List<Edge>(){this.topFaceShortestEdge}, transform);
+            pb.TranslateVertices(new List<Edge>() { this.topFaceShortestEdge }, transform);
             pb.ToMesh();
             pb.Refresh();
-        }
-
-        private Face findWallBelow(Edge edge)
-        {
-            // find the wall-face below, to get its normal (because we want to stretch in that direction);
-            var i = 0;
-            foreach (var face in this.pb.faces) {
-                // first we get the bottom and ceiling, we want to skip those
-                if (i > 1)
-                {
-                    if (face.edges.Contains(edge))
-                    {
-                        return face;
-                    }
-                }
-                i++;
-            }
-
-            return null;
         }
     }
 }

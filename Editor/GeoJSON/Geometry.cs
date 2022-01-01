@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace GeoJsonCityBuilder.Data.GeoJSON {
+namespace GeoJsonCityBuilder.Data.GeoJSON
+{
     [Serializable]
     public abstract class Geometry
     {
