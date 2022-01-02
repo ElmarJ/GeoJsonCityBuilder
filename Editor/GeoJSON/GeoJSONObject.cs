@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GeoJsonCityBuilder.Data.GeoJSON;
+using Defective.JSON;
 using System.Linq;
 
 namespace GeoJsonCityBuilder.Data.GeoJSON
@@ -29,20 +29,20 @@ namespace GeoJsonCityBuilder.Data.GeoJSON
             {
                 var feature = new Feature
                 {
-                    Type = jsonFeature["type"].str
+                    Type = jsonFeature["type"].stringValue
                 };
-                feature.Properties.Type = jsonFeature["properties"]["type"]?.str;
-                feature.Properties.Height = jsonFeature["properties"]["height"]?.f;
-                feature.Properties.ExistencePeriodStartYear = jsonFeature["properties"]["exist_period_start"]?.i;
-                feature.Properties.ExistencePeriodEndYear = jsonFeature["properties"]["exist_period_end"]?.i;
+                feature.Properties.Type = jsonFeature["properties"]["type"]?.stringValue;
+                feature.Properties.Height = jsonFeature["properties"]["height"]?.floatValue;
+                feature.Properties.ExistencePeriodStartYear = jsonFeature["properties"]["exist_period_start"]?.intValue;
+                feature.Properties.ExistencePeriodEndYear = jsonFeature["properties"]["exist_period_end"]?.intValue;
 
                 var geometryType = jsonFeature["geometry"]["type"];
 
-                feature.Geometry = geometryType.str switch
+                feature.Geometry = geometryType.stringValue switch
                 {
                     "Polygon" => ParsePolygonGeometry(jsonFeature["geometry"]["coordinates"].list),
                     "MultiPolygon" => ParseMultiPolygonGeometry(jsonFeature["geometry"]["coordinates"].list),
-                    "Point" => new PointGeometry{Coordinate = new Coordinate(jsonFeature["geometry"]["coordinates"][0].f, jsonFeature["geometry"]["coordinates"][1].f)},
+                    "Point" => new PointGeometry{Coordinate = new Coordinate(jsonFeature["geometry"]["coordinates"][0].floatValue, jsonFeature["geometry"]["coordinates"][1].floatValue)},
                     _ => null,
                 };
 
@@ -59,7 +59,7 @@ namespace GeoJsonCityBuilder.Data.GeoJSON
                 from jsonPolygon in jsonPolygons
                 select (
                     from jsonCoordinate in jsonPolygon.list
-                    select new Coordinate(jsonCoordinate[0].f, jsonCoordinate[1].f))
+                    select new Coordinate(jsonCoordinate[0].floatValue, jsonCoordinate[1].floatValue))
                     .ToList()
                 );
             return geometry;
