@@ -49,3 +49,8 @@ openupm add nl.elmarjansen.geojsoncitybuilder
 ## Open source credits
 
 This package makes use of the [JSONObject library by Matt Schoen](https://github.com/mtschoen/JSONObject)
+
+# Links
+
+Links kept for reference to similar or otherwise relevant projects:
+ - [BlenderGis](https://github.com/domlysz/BlenderGIS): a plugin for Blender to generate objects from GIS-data
