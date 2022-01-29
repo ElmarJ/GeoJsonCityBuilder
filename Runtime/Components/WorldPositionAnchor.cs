@@ -7,13 +7,13 @@ namespace GeoJsonCityBuilder
 {
     public class WorldPositionAnchor : MonoBehaviour
     {
-        public Coordinate Origin;
+        public Coordinate SceneOrigin;
 
         public Coordinate Coordinates
         {
             get
             {
-                return Origin.LocalGridTransform(new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z));
+                return SceneOrigin.LocalGridTransform(new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z));
             }
             set
             {
@@ -21,8 +21,15 @@ namespace GeoJsonCityBuilder
                 //    with the implied origin (i.e. the coordinates of the current Unity origin)
                 //    which can be found by walking backwards from our current position to origin.
                 var pos = this.gameObject.transform.position;
-                this.Origin = value.LocalGridTransform(new Vector2(-1 * pos.x, -1 * pos.z));
+                this.SceneOrigin = value.LocalGridTransform(new Vector2(-1 * pos.x, -1 * pos.z));
             }
         }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawSphere(transform.position, 1);
+        Gizmos.DrawIcon(transform.position, "BuildSettings.Web", true);
+    }
     }
 }
