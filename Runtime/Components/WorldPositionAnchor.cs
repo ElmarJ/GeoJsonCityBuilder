@@ -24,5 +24,12 @@ namespace GeoJsonCityBuilder
                 this.SceneOrigin = value.LocalGridTransform(new Vector2(-1 * pos.x, -1 * pos.z));
             }
         }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawSphere(transform.position, 1);
+        Gizmos.DrawIcon(transform.position, "BuildSettings.Web", true);
+    }
     }
 }
