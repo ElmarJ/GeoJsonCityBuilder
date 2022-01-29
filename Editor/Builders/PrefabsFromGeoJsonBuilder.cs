@@ -63,7 +63,7 @@ namespace GeoJsonCityBuilder.Editor
                 var go = Object.Instantiate(this.Component.prefab, this.Component.transform);
 
                 // Todo: solve this, we shouldn't assign to positionComponent.
-                var worldOrigin = this.Component.worldPosition.Origin;
+                var worldOrigin = this.Component.worldPosition.SceneOrigin;
 
                 var position = geometry.Coordinate.ToLocalPosition(worldOrigin, go.transform.position.y);
                 go.transform.localPosition = position;
