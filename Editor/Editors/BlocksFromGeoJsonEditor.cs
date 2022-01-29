@@ -11,6 +11,7 @@ namespace GeoJsonCityBuilder.Editor
     public class BlocksFromGeoJsonEditor : UnityEditor.Editor
     {
         SerializedProperty geoJsonFile;
+        SerializedProperty worldPositionAnchor;
         SerializedProperty featureTypeFilter;
         SerializedProperty heightMin;
         SerializedProperty heightMax;
@@ -27,6 +28,7 @@ namespace GeoJsonCityBuilder.Editor
         void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
+            worldPositionAnchor = serializedObject.FindProperty("worldPositionAnchor");
             featureTypeFilter = serializedObject.FindProperty("featureTypeFilter");
             heightMin = serializedObject.FindProperty("heightMin");
             heightMax = serializedObject.FindProperty("heightMax");
@@ -37,13 +39,16 @@ namespace GeoJsonCityBuilder.Editor
             pointedRoofTops = serializedObject.FindProperty("pointedRoofTops");
             raiseFacades = serializedObject.FindProperty("raiseFacades");
 
-            builder = new BlocksFromGeoJsonBuilder(this.serializedObject.targetObject as BlocksFromGeoJson);
+            builder = new BlocksFromGeoJsonBuilder(this.TargetObject);
         }
+
+        public BlocksFromGeoJson TargetObject { get => this.serializedObject.targetObject as BlocksFromGeoJson; }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
             EditorGUILayout.PropertyField(geoJsonFile);
+            EditorGUILayout.PropertyField(worldPositionAnchor);
             EditorGUILayout.PropertyField(featureTypeFilter);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(heightMin);

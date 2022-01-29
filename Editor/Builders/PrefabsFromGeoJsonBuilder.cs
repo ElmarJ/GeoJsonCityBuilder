@@ -62,11 +62,11 @@ namespace GeoJsonCityBuilder.Editor
             {
                 var go = Object.Instantiate(this.Component.prefab, this.Component.transform);
 
-                var positionComponent = go.AddComponent<PositionOnWorldCoordinates>();
-                positionComponent.Origin = geometry.Coordinate;
+                // Todo: solve this, we shouldn't assign to positionComponent.
+                var worldOrigin = this.Component.worldPosition.Origin;
 
-                positionComponent.Recalculate();
-
+                var position = geometry.Coordinate.ToLocalPosition(worldOrigin, go.transform.position.y);
+                go.transform.localPosition = position;
                 go.transform.Rotate(0f, Random.Range(0f, 360f), 0, Space.Self);
             }
         }
