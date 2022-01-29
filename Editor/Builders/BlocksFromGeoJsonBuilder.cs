@@ -18,7 +18,7 @@ namespace GeoJsonCityBuilder.Editor
         public BlocksFromGeoJsonBuilder(BlocksFromGeoJson blocksFromGeoJsonComponent)
         {
             this.Component = blocksFromGeoJsonComponent;
-            this.m_origin = Component.GetComponent<PositionOnWorldCoordinates>().Origin;
+            this.m_origin = Component.worldPositionAnchor.Origin;
         }
 
         private void DeserializeGeoJson()

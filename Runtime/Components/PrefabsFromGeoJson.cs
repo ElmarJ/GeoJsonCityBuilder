@@ -9,10 +9,11 @@ using UnityEngine.ProBuilder.MeshOperations;
 namespace GeoJsonCityBuilder
 {
     [ExecuteAlways]
-    [RequireComponent(typeof(PositionOnWorldCoordinates))]
     public class PrefabsFromGeoJson : MonoBehaviour
     {
         public TextAsset geoJsonFile;
+        public WorldPositionAnchor worldPosition;
+
         public string featureTypeFilter;
 
         public GameObject prefab;

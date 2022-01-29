@@ -7,9 +7,9 @@ using UnityEngine.ProBuilder;
 namespace GeoJsonCityBuilder
 {
     [ExecuteAlways]
-    [RequireComponent(typeof(PositionOnWorldCoordinates))]
     public class BlocksFromGeoJson : MonoBehaviour
     {
+        public WorldPositionAnchor worldPositionAnchor;
         public TextAsset geoJsonFile;
         public string featureTypeFilter;
         public float heightMin;
