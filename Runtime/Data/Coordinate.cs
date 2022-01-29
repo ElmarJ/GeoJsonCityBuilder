@@ -4,8 +4,11 @@ using UnityEngine;
 namespace GeoJsonCityBuilder.Data
 {
     [Serializable]
-    public class Coordinate
+    public struct Coordinate
     {
+        // earth radius in meters:
+        const int R = 6371000;
+
         public float Lon;
         public float Lat;
 
@@ -16,14 +19,20 @@ namespace GeoJsonCityBuilder.Data
         }
 
         public Vector2 ToLocalGrid(Coordinate gridOrigin) => MeterVectorFromCoordinates(gridOrigin, this);
+        public Coordinate LocalGridTransform(Vector2 transformVector) => CoordinateFromMeterVector(this, transformVector);
+        
+        public Vector3 ToLocalPosition(Coordinate gridOrigin, float height)
+        {
+            var planePosition = ToLocalGrid(gridOrigin);
+            return new Vector3(planePosition.x, height, planePosition.y);
+        }
 
         // Converts Degrees to Radians
         static double Rad(double degrees) => degrees * Math.PI / 180;
+        static double Deg(double rad) => rad * 180 / Math.PI;
 
         public static double MeterDistanceFromCoordinates(Coordinate coordinate1, Coordinate coordinate2)
         {
-            const int R = 6371000; // km - earth diameter
-
             var dLat = Rad(coordinate2.Lat - coordinate1.Lat);
             var dLon = Rad(coordinate2.Lon - coordinate1.Lon);
 
@@ -36,8 +45,6 @@ namespace GeoJsonCityBuilder.Data
 
         public static Vector2 MeterVectorFromCoordinates(Coordinate coordinate1, Coordinate coordinate2)
         {
-            const int R = 6371000; // km - earth diameter
-
             var dLon = Rad(coordinate2.Lon - coordinate1.Lon);
             var dLat = Rad(coordinate2.Lat - coordinate1.Lat);
 
@@ -60,6 +67,40 @@ namespace GeoJsonCityBuilder.Data
             }
 
             return new Vector2((float)metersLon, (float)metersLat);
+        }
+
+        public static Coordinate CoordinateFromMeterVector(Coordinate origin, Vector2 meterVector)
+        {
+            // Inverse function of MeterVectorFromCoordinates()
+            var metersLon = meterVector.x;
+            var metersLat = meterVector.y;
+
+            var cLon = metersLon / R;
+            var aLon = Math.Tan(Math.Pow(cLon / 2, 2) / Math.Pow(1 + (cLon / 2), 2));
+
+            var cLat = metersLat / R;
+            var aLat = Math.Tan(Math.Pow(cLat / 2, 2) / Math.Pow(1 + (cLat / 2), 2));
+
+            var dLat = (2 * Math.Asin(Math.Sqrt(aLat)));
+            if (meterVector.x > 0)
+            {
+                dLat *= -1;
+            }
+            var lat = origin.Lat - Deg(dLat);
+
+            var dLon = Math.Asin(Math.Sqrt(aLon / Math.Pow(Math.Cos(Rad(lat)), 2))) * 2;
+            if (meterVector.y > 0)
+            {
+                dLon *= -1;
+            }
+            var lon = origin.Lon - Deg(dLon);
+            
+            return new Coordinate((float)lon, (float)lat);
+        }
+
+        public override string ToString()
+        {
+            return this.Lat.ToString() + " N, " + this.Lon.ToString() + " W";
         }
     }
 }
