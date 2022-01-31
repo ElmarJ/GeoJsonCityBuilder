@@ -69,7 +69,8 @@ namespace GeoJsonCityBuilder.Editor
             {
                 var geometry = feature.Geometry as Polygon;
 
-                var block = new GameObject(this.Component.featureTypeFilter + i++.ToString());
+                var block = this.Component.basePrefab ? GameObject.Instantiate(this.Component.basePrefab) : new GameObject(); 
+                block.name = this.Component.featureTypeFilter + i++.ToString();
                 block.transform.parent = this.Component.transform;
                 block.transform.position = this.Component.transform.position;
 
