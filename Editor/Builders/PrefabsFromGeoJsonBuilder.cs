@@ -18,7 +18,7 @@ namespace GeoJsonCityBuilder.Editor
             private set;
         }
 
-        List<Point> m_geometries;
+        List<Feature> m_features;
 
         public PrefabsFromGeoJsonBuilder(PrefabsFromGeoJson component)
         {
@@ -28,11 +28,11 @@ namespace GeoJsonCityBuilder.Editor
         private void DeserializeGeoJson()
         {
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
-            var filteredGeometries =
+            var filteredFeatures =
                 from feature in geoJSON.Features
                 where this.Component.featureTypeFilter == "" || feature.Properties["Type"].ToString() == this.Component.featureTypeFilter
-                select feature.Geometry as Point;
-            this.m_geometries = filteredGeometries.ToList();
+                select feature as Feature;
+            this.m_features = filteredFeatures.ToList();
         }
 
         public void RemoveAllChildren()
@@ -58,16 +58,20 @@ namespace GeoJsonCityBuilder.Editor
             this.RemoveAllChildren();
             this.DeserializeGeoJson();
 
-            foreach (var geometry in this.m_geometries)
+            foreach (Feature feature in this.m_features)
             {
+                var point = feature.Geometry as Point;
                 var go = Object.Instantiate(this.Component.prefab, this.Component.transform);
 
                 // Todo: solve this, we shouldn't assign to positionComponent.
                 var worldOrigin = this.Component.worldPosition.SceneOrigin;
-
-                var position = geometry.Coordinates.ToCoordinate().ToLocalPosition(worldOrigin, go.transform.position.y);
+                
+                var position = point.Coordinates.ToCoordinate().ToLocalPosition(worldOrigin, go.transform.position.y);
                 go.transform.localPosition = position;
                 go.transform.Rotate(0f, Random.Range(0f, 360f), 0, Space.Self);
+
+                var featureComponent = go.AddComponent<GeoJsonFeatureInstance>();
+                featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
             }
         }
     }

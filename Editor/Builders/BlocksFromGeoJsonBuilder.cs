@@ -74,11 +74,16 @@ namespace GeoJsonCityBuilder.Editor
                 block.transform.parent = this.Component.transform;
                 block.transform.position = this.Component.transform.position;
 
+                var featureComponent = block.AddComponent<GeoJsonFeatureInstance>();
+                featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
+
+
                 var existenceController = block.AddComponent<ExistenceController>();
                 existenceController.existencePeriodStart = feature.Properties.ContainsKey("ExistencePeriodStartYear") ? (long)feature.Properties["ExistencePeriodStartYear"] : -9999;
                 existenceController.existencePeriodEnd = feature.Properties.ContainsKey("ExistencePeriodEndYear") ? (long)feature.Properties["ExistencePeriodEndYear"] : 9999;
 
                 var controller = block.AddComponent<BlockFromPolygon>();
+
                 controller.height = !feature.Properties.ContainsKey("Height") || (float)feature.Properties["Height"] == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : (long)feature.Properties["Height"];
 
                 controller.sideMaterial = this.Component.sideMaterials[Random.Range(0, this.Component.sideMaterials.Count)];
@@ -89,7 +94,6 @@ namespace GeoJsonCityBuilder.Editor
                 controller.raiseFrontAndBackFacadeTop = this.Component.raiseFacades;
 
                 controller.floorPolygon = new List<Vector3>(from coor in geometry.Coordinates[0].Coordinates select new Vector3(coor.ToCoordinate().ToLocalGrid(m_origin).x, 0, coor.ToCoordinate().ToLocalGrid(m_origin).y));
-
                 var blockBuilder = new BlockFromPolygonBuilder(controller);
                 blockBuilder.Draw();
             }

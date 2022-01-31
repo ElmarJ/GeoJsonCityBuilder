@@ -20,6 +20,7 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty leanForward;
         SerializedProperty raiseFrontAndBackFacadeTop;
 
+        bool showFloorPolygon = false;
 
         void OnEnable()
         {
@@ -53,10 +54,13 @@ namespace GeoJsonCityBuilder.Editor
 
             if (controller.floorPolygon != null)
             {
-                EditorGUILayout.BeginFoldoutHeaderGroup(false, "Polygon");
-                foreach (var coordinate in (this.serializedObject.targetObject as BlockFromPolygon).floorPolygon)
+                showFloorPolygon = EditorGUILayout.BeginFoldoutHeaderGroup(showFloorPolygon, "Polygon");
+                if(showFloorPolygon)
                 {
-                    EditorGUILayout.LabelField(coordinate.ToString());
+                    foreach (var coordinate in controller.floorPolygon)
+                    {
+                        EditorGUILayout.LabelField(coordinate.ToString());
+                    }
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
