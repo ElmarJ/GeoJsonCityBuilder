@@ -11,6 +11,7 @@ namespace GeoJsonCityBuilder.Editor
     {
         SerializedProperty geoJsonFile;
         SerializedProperty featureTypeFilter;
+        SerializedProperty worldPosition;
         SerializedProperty prefab;
 
         PrefabsFromGeoJsonBuilder builder;
@@ -19,6 +20,7 @@ namespace GeoJsonCityBuilder.Editor
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
             featureTypeFilter = serializedObject.FindProperty("featureTypeFilter");
+            worldPosition = serializedObject.FindProperty("worldPosition");
             prefab = serializedObject.FindProperty("prefab");
 
             builder = new PrefabsFromGeoJsonBuilder(this.serializedObject.targetObject as PrefabsFromGeoJson);
@@ -28,6 +30,7 @@ namespace GeoJsonCityBuilder.Editor
         {
             serializedObject.Update();
             EditorGUILayout.PropertyField(geoJsonFile);
+            EditorGUILayout.PropertyField(worldPosition);
             EditorGUILayout.PropertyField(featureTypeFilter);
             EditorGUILayout.PropertyField(prefab);
             EditorGUILayout.BeginHorizontal();
