@@ -11,6 +11,7 @@ namespace GeoJsonCityBuilder
     {
         public WorldPositionAnchor worldPositionAnchor;
         public TextAsset geoJsonFile;
+        public GameObject basePrefab;
         public string featureTypeFilter;
         public float heightMin;
         public float heightMax;
