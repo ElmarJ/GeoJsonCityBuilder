@@ -6,12 +6,16 @@
   "unity": "2019.1",
   "unityRelease": "0b5",
   "dependencies": {
-    "com.unity.probuilder": "4.5.2"
+    "com.unity.probuilder": "4.5.2",
+    "com.virgis.geojson.net": "1.2.17"
   },
   "keywords": [],
   "author": {
     "name": "Elmar Jansen",
     "email": "geojsoncitybuilder@elmarjansen.nl",
     "url": "https://github.com/ElmarJ/GeoJsonCityBuilder"
+  },
+  "publishConfig": {
+    "registry": "https://package.openupm.com"
   }
 }

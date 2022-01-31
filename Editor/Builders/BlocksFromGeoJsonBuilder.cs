@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 
 using System.Linq;
+using GeoJSON.Net.Feature;
+using GeoJSON.Net.Geometry;
 using GeoJsonCityBuilder.Data;
-using GeoJsonCityBuilder.Data.GeoJSON;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -23,16 +25,16 @@ namespace GeoJsonCityBuilder.Editor
 
         private void DeserializeGeoJson()
         {
-            var geoJSON = new GeoJSONObject(this.Component.geoJsonFile.text);
+            var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
             var filteredFeatures =
-                from feature in geoJSON.FeatureCollection.Features
+                from feature in geoJSON.Features
                 select feature;
 
             if (this.Component.featureTypeFilter != null && this.Component.featureTypeFilter != "")
             {
                 filteredFeatures =
                     from feature in filteredFeatures
-                    where feature.Properties.Type == this.Component.featureTypeFilter
+                    where feature.Properties["Type"].ToString() == this.Component.featureTypeFilter
                     select feature;
             }
             this.m_features = filteredFeatures.ToList();
@@ -65,18 +67,18 @@ namespace GeoJsonCityBuilder.Editor
 
             foreach (var feature in this.m_features)
             {
-                var geometry = feature.Geometry as PolygonGeometry;
+                var geometry = feature.Geometry as Polygon;
 
                 var block = new GameObject(this.Component.featureTypeFilter + i++.ToString());
                 block.transform.parent = this.Component.transform;
                 block.transform.position = this.Component.transform.position;
 
                 var existenceController = block.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ExistencePeriodStartYear ?? -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ExistencePeriodEndYear ?? 9999;
+                existenceController.existencePeriodStart = feature.Properties.ContainsKey("ExistencePeriodStartYear") ? (long)feature.Properties["ExistencePeriodStartYear"] : -9999;
+                existenceController.existencePeriodEnd = feature.Properties.ContainsKey("ExistencePeriodEndYear") ? (long)feature.Properties["ExistencePeriodEndYear"] : 9999;
 
                 var controller = block.AddComponent<BlockFromPolygon>();
-                controller.height = feature.Properties.Height == null || feature.Properties.Height == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : feature.Properties.Height.Value;
+                controller.height = !feature.Properties.ContainsKey("Height") || (float)feature.Properties["Height"] == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : (long)feature.Properties["Height"];
 
                 controller.sideMaterial = this.Component.sideMaterials[Random.Range(0, this.Component.sideMaterials.Count)];
                 controller.topMaterial = this.Component.topMaterial;
@@ -85,7 +87,7 @@ namespace GeoJsonCityBuilder.Editor
                 controller.pointedRoof = this.Component.pointedRoofTops;
                 controller.raiseFrontAndBackFacadeTop = this.Component.raiseFacades;
 
-                controller.floorPolygon = new List<Vector3>(from coor in geometry.Coordinates[0] select new Vector3(coor.ToLocalGrid(m_origin).x, 0, coor.ToLocalGrid(m_origin).y));
+                controller.floorPolygon = new List<Vector3>(from coor in geometry.Coordinates[0].Coordinates select new Vector3(coor.ToCoordinate().ToLocalGrid(m_origin).x, 0, coor.ToCoordinate().ToLocalGrid(m_origin).y));
 
                 var blockBuilder = new BlockFromPolygonBuilder(controller);
                 blockBuilder.Draw();

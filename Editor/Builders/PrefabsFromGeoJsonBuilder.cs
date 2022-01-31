@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
 using System.Linq;
+using GeoJSON.Net.Geometry;
+using Newtonsoft.Json;
 using GeoJsonCityBuilder.Data;
-using GeoJsonCityBuilder.Data.GeoJSON;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
+using GeoJSON.Net.Feature;
 
 namespace GeoJsonCityBuilder.Editor
 {
@@ -18,7 +18,7 @@ namespace GeoJsonCityBuilder.Editor
             private set;
         }
 
-        List<PointGeometry> m_geometries;
+        List<Point> m_geometries;
 
         public PrefabsFromGeoJsonBuilder(PrefabsFromGeoJson component)
         {
@@ -27,11 +27,11 @@ namespace GeoJsonCityBuilder.Editor
 
         private void DeserializeGeoJson()
         {
-            var geoJSON = new GeoJSONObject(this.Component.geoJsonFile.text);
+            var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
             var filteredGeometries =
-                from feature in geoJSON.FeatureCollection.Features
-                where this.Component.featureTypeFilter == "" || feature.Properties.Type == this.Component.featureTypeFilter
-                select feature.Geometry as PointGeometry;
+                from feature in geoJSON.Features
+                where this.Component.featureTypeFilter == "" || feature.Properties["Type"].ToString() == this.Component.featureTypeFilter
+                select feature.Geometry as Point;
             this.m_geometries = filteredGeometries.ToList();
         }
 
@@ -65,7 +65,7 @@ namespace GeoJsonCityBuilder.Editor
                 // Todo: solve this, we shouldn't assign to positionComponent.
                 var worldOrigin = this.Component.worldPosition.SceneOrigin;
 
-                var position = geometry.Coordinate.ToLocalPosition(worldOrigin, go.transform.position.y);
+                var position = geometry.Coordinates.ToCoordinate().ToLocalPosition(worldOrigin, go.transform.position.y);
                 go.transform.localPosition = position;
                 go.transform.Rotate(0f, Random.Range(0f, 360f), 0, Space.Self);
             }
