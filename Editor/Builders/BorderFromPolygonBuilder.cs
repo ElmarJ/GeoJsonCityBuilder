@@ -81,6 +81,7 @@ namespace GeoJsonCityBuilder.Editor
             var directionFromNext = (innerPoint - nextInnerPoint).normalized;
 
             // TODO: there is probably a more elegant way to do this, but for now this works :)
+            //     (more or less - this does not result in correct width)
             var outerPointDirection = directionFromPrevious + directionFromNext / 2;
             var cornerAngle = Vector3.SignedAngle(directionFromPrevious, directionFromNext, Vector3.up);
             var outerPointExtension = cornerAngle < 0 ? BorderInfo.width : BorderInfo.width * -1;
