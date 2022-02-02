@@ -23,6 +23,7 @@ namespace GeoJsonCityBuilder.Editor
 
             var innerPolygon = BorderInfo.floorPolygon;
             var outerPolygon = this.GetOuterPolygon();
+ 
             var n = innerPolygon.Count;
 
             for (int i = 0; i < n; i++)
@@ -76,11 +77,14 @@ namespace GeoJsonCityBuilder.Editor
 
         private Vector3 GetOuterPoint(Vector3 innerPoint, Vector3 previousInnerPoint, Vector3 nextInnerPoint)
         {
-            // TODO: this only works for "positive" angles (outer corners), 
-            //     not for "negative" angles (inner corners).
+            var directionFromPrevious = (innerPoint - previousInnerPoint).normalized;
+            var directionFromNext = (innerPoint - nextInnerPoint).normalized;
 
-            var outerPointDirection = ((innerPoint - previousInnerPoint).normalized + (innerPoint - nextInnerPoint).normalized) / 2;
-            var outerPoint = innerPoint + outerPointDirection * BorderInfo.width;
+            // TODO: there is probably a more elegant way to do this, but for now this works :)
+            var outerPointDirection = directionFromPrevious + directionFromNext / 2;
+            var cornerAngle = Vector3.SignedAngle(directionFromPrevious, directionFromNext, Vector3.up);
+            var outerPointExtension = cornerAngle < 0 ? BorderInfo.width : BorderInfo.width * -1;
+            var outerPoint = innerPoint + outerPointDirection * outerPointExtension;
             return outerPoint;
         }
 
