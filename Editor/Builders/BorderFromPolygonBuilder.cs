@@ -65,6 +65,11 @@ namespace GeoJsonCityBuilder.Editor
         {
             // Better approaches here: https://stackoverflow.com/questions/1109536/an-algorithm-for-inflating-deflating-offsetting-buffering-polygons
 
+            // Todo: 
+            //   - check whether this is clockwise or counterclockwise by looking at sum of SignedAngle values;
+            //   - allow to set both inward as well as outward extension
+            //   - code below can be refactored as Linq query
+
             var innerPolygon = this.BorderInfo.floorPolygon;
             var n = innerPolygon.Count;
             var outerPolygon = new List<Vector3>();
@@ -91,13 +96,18 @@ namespace GeoJsonCityBuilder.Editor
             var toPreviousOuterLine = OrthogonalVectorCounterClockwise(innerPoint - previousInnerPoint).normalized * BorderInfo.width;
             var toNextOuterLine = OrthogonalVectorCounterClockwise(nextInnerPoint - innerPoint).normalized * BorderInfo.width;
 
-            var b = innerPoint + toPreviousOuterLine;
-            var c = innerPoint + toNextOuterLine;
-
-            var outerPoint = LineLineIntersection(b, previousVector, c, nextVector);
-            Debug.LogFormat("Inner Point {0} ,Outer point: {1}, b: {2}, c {3}", innerPoint, outerPoint, b, c);
-
-            return outerPoint;
+            var projectedInnerOnOuterPreviousLine = innerPoint + toPreviousOuterLine;
+            var projectedInnerOnOuterNextLine = innerPoint + toNextOuterLine;
+            
+            try
+            {
+                return LineLineIntersection(projectedInnerOnOuterPreviousLine, previousVector, projectedInnerOnOuterNextLine, nextVector);
+            }
+            catch (InvalidOperationException)
+            {
+                // If no intersection exists, lines ar probably (almost) in same direction. In that case we simply return a known point on the outer line.
+                return projectedInnerOnOuterPreviousLine;
+            }
         }
 
         // Taken from https://stackoverflow.com/questions/59449628/check-when-two-vector3-lines-intersect-unity3d
