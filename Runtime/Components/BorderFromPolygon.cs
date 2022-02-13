@@ -13,10 +13,12 @@ namespace GeoJsonCityBuilder
     [RequireComponent(typeof(MeshCollider))]
     public class BorderFromPolygon : MonoBehaviour
     {
+        
         public List<Vector3> floorPolygon = new List<Vector3>();
         public Material material;
         public float height = 1f;
-        public float width = 1f;
+        public float outerExtension = 1f;
+        public float innerExtension = 1f;
         public AutoUnwrapSettings sideUvUnwrapSettings = new AutoUnwrapSettings();
     }
 }

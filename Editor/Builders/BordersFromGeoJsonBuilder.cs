@@ -73,7 +73,8 @@ namespace GeoJsonCityBuilder.Editor
 
                 var controller = border.AddComponent<BorderFromPolygon>();
                 controller.height = this.Component.height;
-                controller.width = this.Component.width;
+                controller.outerExtension = this.Component.outerExtension;
+                controller.innerExtension = this.Component.innerExtension;
                 controller.material = this.Component.material;
                 controller.sideUvUnwrapSettings = this.Component.sideUvUnwrapSettings;
 

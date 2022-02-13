@@ -10,7 +10,8 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty geoJsonFile;
         SerializedProperty worldPositionAnchor;
         SerializedProperty height;
-        SerializedProperty width;
+        SerializedProperty outerExtension;
+        SerializedProperty innerExtension;
         SerializedProperty material;
         BordersFromGeoJsonBuilder builder;
 
@@ -19,7 +20,8 @@ namespace GeoJsonCityBuilder.Editor
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
             worldPositionAnchor = serializedObject.FindProperty("worldPositionAnchor");
             height = serializedObject.FindProperty("height");
-            width = serializedObject.FindProperty("width");
+            outerExtension = serializedObject.FindProperty("outerExtension");
+            innerExtension = serializedObject.FindProperty("innerExtension");
             material = serializedObject.FindProperty("material");
 
             builder = new BordersFromGeoJsonBuilder(this.TargetObject);
@@ -34,7 +36,8 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(worldPositionAnchor);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(height);
-            EditorGUILayout.PropertyField(width);
+            EditorGUILayout.PropertyField(outerExtension);
+            EditorGUILayout.PropertyField(innerExtension);
             EditorGUILayout.PropertyField(material);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
@@ -44,6 +47,7 @@ namespace GeoJsonCityBuilder.Editor
             if (GUILayout.Button("Generate"))
             {
                 this.builder.Rebuild();
+                
             }
             EditorGUILayout.EndHorizontal();
             serializedObject.ApplyModifiedProperties();

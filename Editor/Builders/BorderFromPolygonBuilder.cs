@@ -12,6 +12,9 @@ namespace GeoJsonCityBuilder.Editor
         public BorderFromPolygon BorderInfo { get; private set; }
         public GameObject GameObject { get; private set; }
 
+        private List<LinkedCorner> corners;
+        private int n;
+
         public BorderFromPolygonBuilder(BorderFromPolygon borderInfo)
         {
             this.BorderInfo = borderInfo;
@@ -21,11 +24,21 @@ namespace GeoJsonCityBuilder.Editor
         public void Draw()
         {
             this.RemoveAllChildren();
+            this.PopulateCornerList();
 
-            var innerPolygon = BorderInfo.floorPolygon;
-            var outerPolygon = this.GetOuterPolygon();
+            var angles = 
+                from corner in corners
+                select Vector3.SignedAngle(corner.current - corner.previous, corner.next - corner.current, Vector3.up);
 
-            var n = innerPolygon.Count;
+            var clockwise = angles.Sum() > 0;
+
+            var outerPolygon =
+                (from innerCorner in corners
+                select this.FindOuterPoint(innerCorner, BorderInfo.outerExtension, clockwise)).ToList();
+
+            var innerPolygon =
+                (from innerCorner in corners
+                select this.FindOuterPoint(innerCorner, BorderInfo.innerExtension, !clockwise)).ToList();
 
             for (int i = 0; i < n; i++)
             {
@@ -39,6 +52,24 @@ namespace GeoJsonCityBuilder.Editor
                 };
 
                 this.DrawSegment(segmentFloorPolygon);
+            }
+        }
+
+        private void PopulateCornerList()
+        {
+           var basePolygon = this.BorderInfo.floorPolygon;
+
+            this.n = basePolygon.Count;
+            this.corners = new List<LinkedCorner>();
+
+            for (int i = 0; i < n; i++)
+            {
+                corners.Add(new LinkedCorner()
+                {
+                    current = basePolygon[i],
+                    previous = basePolygon[i > 0 ? i - 1 : n - 1],
+                    next = basePolygon[(i + 1) % n]
+                });
             }
         }
 
@@ -61,43 +92,32 @@ namespace GeoJsonCityBuilder.Editor
             mesh.Refresh();
         }
 
-        private List<Vector3> GetOuterPolygon()
+        private struct LinkedCorner
         {
-            // Better approaches here: https://stackoverflow.com/questions/1109536/an-algorithm-for-inflating-deflating-offsetting-buffering-polygons
+            public Vector3 current;
+            public Vector3 previous;
+            public Vector3 next;
+        }
 
-            // Todo: 
-            //   - check whether this is clockwise or counterclockwise by looking at sum of SignedAngle values;
-            //   - allow to set both inward as well as outward extension
-            //   - code below can be refactored as Linq query
-
-            var innerPolygon = this.BorderInfo.floorPolygon;
-            var n = innerPolygon.Count;
-            var outerPolygon = new List<Vector3>();
-
-            for (int i = 0; i < n; i++)
+        private Vector3 FindOuterPoint(LinkedCorner innerCorner, float extension, bool clockwise = true)
+        {
+            if (extension == 0)
             {
-                var i_previous = i > 0 ? i - 1 : n - 1;
-                var i_next = (i + 1) % n;
-                outerPolygon.Add(this.FindOuterPoint(innerPolygon[i], innerPolygon[i_previous], innerPolygon[i_next]));
+                return innerCorner.current;
             }
-            return outerPolygon;
-        }
 
-        private Vector3 FindOuterPoint(Vector3 innerPoint, Vector3 previousInnerPoint, Vector3 nextInnerPoint)
-        {
-            return FindOuterPointWithVectorMethod(innerPoint, previousInnerPoint, nextInnerPoint);
-        }
+            var current = innerCorner.current;
+            var previous = clockwise ? innerCorner.previous : innerCorner.next;
+            var next = clockwise ? innerCorner.next : innerCorner.previous;
 
-        private Vector3 FindOuterPointWithVectorMethod(Vector3 innerPoint, Vector3 previousInnerPoint, Vector3 nextInnerPoint)
-        {
-            var previousVector = innerPoint - previousInnerPoint;
-            var nextVector = innerPoint - nextInnerPoint;
+            var previousVector = current - previous;
+            var nextVector = current - next;
 
-            var toPreviousOuterLine = OrthogonalVectorCounterClockwise(innerPoint - previousInnerPoint).normalized * BorderInfo.width;
-            var toNextOuterLine = OrthogonalVectorCounterClockwise(nextInnerPoint - innerPoint).normalized * BorderInfo.width;
+            var toPreviousOuterLine = OrthogonalVectorCounterClockwise(current - previous).normalized * extension;
+            var toNextOuterLine = OrthogonalVectorCounterClockwise(next - current).normalized * extension;
 
-            var projectedInnerOnOuterPreviousLine = innerPoint + toPreviousOuterLine;
-            var projectedInnerOnOuterNextLine = innerPoint + toNextOuterLine;
+            var projectedInnerOnOuterPreviousLine = current + toPreviousOuterLine;
+            var projectedInnerOnOuterNextLine = current + toNextOuterLine;
             
             try
             {
@@ -135,42 +155,6 @@ namespace GeoJsonCityBuilder.Editor
         private static Vector3 OrthogonalVectorCounterClockwise(Vector3 originalVector)
         {
             return new Vector3(originalVector.z * -1, originalVector.y, originalVector.x);
-        }
-
-        private Vector3 FindOuterPointWithGeometryMethod(Vector3 innerPoint, Vector3 previousInnerPoint, Vector3 nextInnerPoint)
-        {
-            var directionFromPrevious = (innerPoint - previousInnerPoint).normalized;
-            var directionFromNext = (innerPoint - nextInnerPoint).normalized;
-
-            // TODO: there is probably a more elegant way to do this, but for now this works :)
-            //     (more or less - this does not result in correct width)
-            var outerPointDirection = directionFromPrevious + directionFromNext / 2;
-            var cornerAngle = Vector3.SignedAngle(directionFromPrevious, directionFromNext, Vector3.up);
-            var outerPointExtension = cornerAngle < 0 ? BorderInfo.width : BorderInfo.width * -1;
-            var outerPoint = innerPoint + outerPointDirection * outerPointExtension;
-            return outerPoint;
-        }
-
-        private Vector3 FindOuterPointWithLinearEquationMethod(Vector3 innerPoint, Vector3 previousInnerPoint, Vector3 nextInnerPoint)
-        {
-            var b1 = (innerPoint.z - previousInnerPoint.z) / (innerPoint.x - previousInnerPoint.x);
-            var b2 = (innerPoint.z - nextInnerPoint.z) / (innerPoint.x - nextInnerPoint.x);
-
-            var angle = Vector3.SignedAngle(innerPoint - previousInnerPoint, innerPoint - nextInnerPoint, Vector3.down);
-
-            var distance = BorderInfo.width;
-
-            var a1 = distance * System.Math.Sqrt(1 + b1 * b1);
-            var a2 = distance * -1 * System.Math.Sqrt(1 + b2 * b2);
-
-            var x_intersection = (a2 - a1) / (b1 - b2);
-            var z_intersection = (b1 * x_intersection) + a1;
-
-            var outerVector = new Vector3((float)x_intersection, 0, (float)z_intersection);
-            var outerPoint = innerPoint + outerVector;
-
-            Debug.LogFormat("Inner Point {0} ,Outer point: {1}, b1: {2}, b2: {3}, angle: {4}", innerPoint, outerPoint, b1, b2, angle);
-            return outerPoint;
         }
 
         public void RemoveAllChildren()

@@ -13,14 +13,16 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty floorPolygon;
         SerializedProperty material;
         SerializedProperty height;
-        SerializedProperty width;
+        SerializedProperty outerExtension;
+        SerializedProperty innerExtension;
         SerializedProperty sideUvUnwrapSettings;
 
         void OnEnable()
         {
             floorPolygon = serializedObject.FindProperty("floorPolygon");
             material = serializedObject.FindProperty("material");
-            width = serializedObject.FindProperty("width");
+            outerExtension = serializedObject.FindProperty("outerExtension");
+            innerExtension = serializedObject.FindProperty("innerExtension");
             sideUvUnwrapSettings = serializedObject.FindProperty("sideUvUnwrapSettings");
             height = serializedObject.FindProperty("height");
         }
@@ -33,7 +35,8 @@ namespace GeoJsonCityBuilder.Editor
 
             EditorGUILayout.PropertyField(height);
             EditorGUILayout.PropertyField(floorPolygon);
-            EditorGUILayout.PropertyField(width);
+            EditorGUILayout.PropertyField(outerExtension);
+            EditorGUILayout.PropertyField(innerExtension);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(material);
             EditorGUILayout.PropertyField(sideUvUnwrapSettings);
