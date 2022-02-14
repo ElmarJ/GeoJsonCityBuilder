@@ -1,6 +1,6 @@
 # GeoJsonCityBuilder
-![OpenUPM version](https://img.shields.io/npm/v/nl.elmarjansen.geojsoncitybuilder?label=openupm&registry_uri=https://package.openupm.com)
-![GitHub issues](https://img.shields.io/github/issues/elmarj/GeoJsonCityBuilder)
+[![OpenUPM version](https://img.shields.io/npm/v/nl.elmarjansen.geojsoncitybuilder?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/nl.elmarjansen.geojsoncitybuilder/)
+[![GitHub issues](https://img.shields.io/github/issues/elmarj/GeoJsonCityBuilder)](https://github.com/ElmarJ/GeoJsonCityBuilder/issues)
 
 Unity Package to recreate a 3D-city from a geojson file. Currently allows to create extruded objects (e.g. buildings) from polygons and to place prefabs on points.
 
