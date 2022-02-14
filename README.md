@@ -53,5 +53,6 @@ This package makes use of the [JSONObject library by Matt Schoen](https://github
 # Links
 
 Links kept for reference to similar or otherwise relevant projects:
+ - [ViRGIS](https://github.com/ViRGIS-Team/ViRGiS_v2): a very similar project, to bring GIS data and VR together in Unity.
  - [BlenderGis](https://github.com/domlysz/BlenderGIS): a plugin for Blender to generate objects from GIS-data
  - [Use Houdini for procedural city building](https://www.sidefx.com/tutorials/city-building-with-osm-data/)
