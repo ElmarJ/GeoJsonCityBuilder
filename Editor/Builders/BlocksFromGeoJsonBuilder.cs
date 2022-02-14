@@ -12,7 +12,6 @@ namespace GeoJsonCityBuilder.Editor
 {
     public class BlocksFromGeoJsonBuilder
     {
-        readonly Coordinate m_origin;
         List<Feature> m_features;
 
         public BlocksFromGeoJson Component { get; private set; }
@@ -20,7 +19,6 @@ namespace GeoJsonCityBuilder.Editor
         public BlocksFromGeoJsonBuilder(BlocksFromGeoJson blocksFromGeoJsonComponent)
         {
             this.Component = blocksFromGeoJsonComponent;
-            this.m_origin = Component.worldPositionAnchor.SceneOrigin;
         }
 
         private void DeserializeGeoJson()
@@ -63,6 +61,8 @@ namespace GeoJsonCityBuilder.Editor
             this.RemoveAllChildren();
             this.DeserializeGeoJson();
 
+            var origin = Component.worldPositionAnchor.SceneOrigin;
+
             int i = 0;
 
             foreach (var feature in this.m_features)
@@ -93,7 +93,7 @@ namespace GeoJsonCityBuilder.Editor
                 controller.pointedRoof = this.Component.pointedRoofTops;
                 controller.raiseFrontAndBackFacadeTop = this.Component.raiseFacades;
 
-                controller.floorPolygon = new List<Vector3>(from coor in geometry.Coordinates[0].Coordinates select new Vector3(coor.ToCoordinate().ToLocalGrid(m_origin).x, 0, coor.ToCoordinate().ToLocalGrid(m_origin).y));
+                controller.floorPolygon = new List<Vector3>(from coor in geometry.Coordinates[0].Coordinates select new Vector3(coor.ToCoordinate().ToLocalGrid(origin).x, 0, coor.ToCoordinate().ToLocalGrid(origin).y));
                 var blockBuilder = new BlockFromPolygonBuilder(controller);
                 blockBuilder.Draw();
             }
