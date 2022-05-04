@@ -32,7 +32,7 @@ namespace GeoJsonCityBuilder.Editor
             {
                 filteredFeatures =
                     from feature in filteredFeatures
-                    where feature.Properties["Type"].ToString() == this.Component.featureTypeFilter
+                    where feature.Properties["type"].ToString() == this.Component.featureTypeFilter
                     select feature;
             }
             this.m_features = filteredFeatures.ToList();
@@ -79,12 +79,12 @@ namespace GeoJsonCityBuilder.Editor
 
 
                 var existenceController = block.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ContainsKey("ExistencePeriodStartYear") ? (long)feature.Properties["ExistencePeriodStartYear"] : -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ContainsKey("ExistencePeriodEndYear") ? (long)feature.Properties["ExistencePeriodEndYear"] : 9999;
+                existenceController.existencePeriodStart = feature.Properties.ContainsKey("exist.period.start") ? (long)feature.Properties["exist.period.start"] : -9999;
+                existenceController.existencePeriodEnd = feature.Properties.ContainsKey("exist.period.end") ? (long)feature.Properties["exist.period.end"] : 9999;
 
                 var controller = block.AddComponent<BlockFromPolygon>();
 
-                controller.height = !feature.Properties.ContainsKey("Height") || (float)feature.Properties["Height"] == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : (long)feature.Properties["Height"];
+                controller.height = !feature.Properties.ContainsKey("height") || (float)feature.Properties["height"] == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : (long)feature.Properties["height"];
 
                 controller.sideMaterial = this.Component.sideMaterials[Random.Range(0, this.Component.sideMaterials.Count)];
                 controller.topMaterial = this.Component.topMaterial;

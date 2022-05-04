@@ -30,7 +30,7 @@ namespace GeoJsonCityBuilder.Editor
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
             var filteredFeatures =
                 from feature in geoJSON.Features
-                where this.Component.featureTypeFilter == "" || feature.Properties["Type"].ToString() == this.Component.featureTypeFilter
+                where this.Component.featureTypeFilter == "" || feature.Properties["type"].ToString() == this.Component.featureTypeFilter
                 select feature as Feature;
             this.m_features = filteredFeatures.ToList();
         }
