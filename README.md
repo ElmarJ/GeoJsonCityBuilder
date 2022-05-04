@@ -8,23 +8,29 @@ See for an example on what can be achieved and how to use it, the [Waterlooplein
 
 ## Installation
 
-### Option 1: Through OpenUPM
+### Option 1: Using OpenUPM cli
 
 This package is [listed in the OpenUPM repository](https://openupm.com/packages/nl.elmarjansen.geojsoncitybuilder/#). Installation:
 
 ```
 npm install -g openupm-cli
 cd YOUR_UNITY_PROJECT_FOLDER
+openupm add com.virgis.geojson.net
 openupm add nl.elmarjansen.geojsoncitybuilder
 ```
+
+Note that this package depends on the geojson package com.virgis.geojson.net being installed.
 
 ### Option 2: As a git-link in Unity package manager
 
 1. Click Window -> Package Manager
 2. Click + -> Add Package from git URL
-3. Type _https://github.com/ElmarJ/GeoJsonCityBuilder_ and click Add
+3. Type _https://github.com/ViRGIS-Team/GeoJSON.Net_ and click Add 
+4. Type _https://github.com/ElmarJ/GeoJsonCityBuilder_ and click Add
 
 ## Usage
+
+See https://github.com/ElmarJ/geojsoncitybuilder.devenv for a simple working example in Unity. See https://github.com/ElmarJ/Waterlooplein3D/ for a more advanced example (using the Unity HDRP pipeline).
 
 ### Blocks from geojson polygons
  
