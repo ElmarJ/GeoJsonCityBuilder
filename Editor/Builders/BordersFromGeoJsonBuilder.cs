@@ -68,8 +68,8 @@ namespace GeoJsonCityBuilder.Editor
                 border.transform.position = this.Component.transform.position;
 
                 var existenceController = border.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ContainsKey("exist.period.start") ? (long)feature.Properties["exist.period.start"] : -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ContainsKey("exist.period.end") ? (long)feature.Properties["exist.period.end"] : 9999;
+                existenceController.existencePeriodStart = feature.Properties.ContainsKey("exist.period.start") && feature.Properties["exist.period.start"] != null ? (long)feature.Properties["exist.period.start"] : -9999;
+                existenceController.existencePeriodEnd = feature.Properties.ContainsKey("exist.period.end") && feature.Properties["exist.period.end"] != null ? (long)feature.Properties["exist.period.end"] : 9999;
 
                 var controller = border.AddComponent<BorderFromPolygon>();
                 controller.height = this.Component.height;

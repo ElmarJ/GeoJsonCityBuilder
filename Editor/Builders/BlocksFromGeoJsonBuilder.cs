@@ -79,12 +79,13 @@ namespace GeoJsonCityBuilder.Editor
 
 
                 var existenceController = block.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ContainsKey("exist.period.start") ? (long)feature.Properties["exist.period.start"] : -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ContainsKey("exist.period.end") ? (long)feature.Properties["exist.period.end"] : 9999;
+                existenceController.existencePeriodStart = feature.Properties.ContainsKey("exist.period.start") && feature.Properties["exist.period.start"] != null ? (long)feature.Properties["exist.period.start"] : -9999;
+                existenceController.existencePeriodEnd = feature.Properties.ContainsKey("exist.period.end") && feature.Properties["exist.period.end"] != null ? (long)feature.Properties["exist.period.end"] : 9999;
 
                 var controller = block.AddComponent<BlockFromPolygon>();
 
-                controller.height = !feature.Properties.ContainsKey("height") || (float)feature.Properties["height"] == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : (long)feature.Properties["height"];
+                double height = !feature.Properties.ContainsKey("height") || feature.Properties["height"] == null  ? 0 : (double)feature.Properties["height"];
+                controller.height = height == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : (float)height;
 
                 controller.sideMaterial = this.Component.sideMaterials[Random.Range(0, this.Component.sideMaterials.Count)];
                 controller.topMaterial = this.Component.topMaterial;
