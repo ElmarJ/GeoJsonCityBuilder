@@ -21,5 +21,7 @@ namespace GeoJsonCityBuilder
         public AutoUnwrapSettings sideUvUnwrapSettings = new AutoUnwrapSettings();
         public bool pointedRoofTops = false;
         public bool raiseFacades = false;
+        public string timeStartYearField;
+        public string timeEndYearField;
     }
 }

@@ -24,6 +24,9 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty pointedRoofTops;
         SerializedProperty raiseFacades;
 
+        SerializedProperty timeStartYearField;
+        SerializedProperty timeEndYearField;
+
         BlocksFromGeoJsonBuilder builder;
 
         void OnEnable()
@@ -40,6 +43,8 @@ namespace GeoJsonCityBuilder.Editor
             bottomMaterial = serializedObject.FindProperty("bottomMaterial");
             pointedRoofTops = serializedObject.FindProperty("pointedRoofTops");
             raiseFacades = serializedObject.FindProperty("raiseFacades");
+            timeStartYearField = serializedObject.FindProperty("timeStartYearField");
+            timeEndYearField = serializedObject.FindProperty("timeEndYearField");
 
             builder = new BlocksFromGeoJsonBuilder(this.TargetObject);
         }
@@ -63,6 +68,9 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(sideUvUnwrapSettings);
             EditorGUILayout.PropertyField(bottomMaterial);
             EditorGUILayout.PropertyField(topMaterial);
+            EditorGUILayout.Separator();
+            EditorGUILayout.PropertyField(timeStartYearField);
+            EditorGUILayout.PropertyField(timeEndYearField);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
             {
