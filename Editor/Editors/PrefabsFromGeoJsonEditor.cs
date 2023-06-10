@@ -13,6 +13,9 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty featureTypeFilter;
         SerializedProperty worldPosition;
         SerializedProperty prefab;
+        SerializedProperty timeStartYearField;
+        SerializedProperty timeEndYearField;
+
 
         PrefabsFromGeoJsonBuilder builder;
 
@@ -22,6 +25,8 @@ namespace GeoJsonCityBuilder.Editor
             featureTypeFilter = serializedObject.FindProperty("featureTypeFilter");
             worldPosition = serializedObject.FindProperty("worldPosition");
             prefab = serializedObject.FindProperty("prefab");
+            timeStartYearField = serializedObject.FindProperty("timeStartYearField");
+            timeEndYearField = serializedObject.FindProperty("timeEndYearField");
 
             builder = new PrefabsFromGeoJsonBuilder(this.serializedObject.targetObject as PrefabsFromGeoJson);
         }
@@ -33,6 +38,9 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(worldPosition);
             EditorGUILayout.PropertyField(featureTypeFilter);
             EditorGUILayout.PropertyField(prefab);
+            EditorGUILayout.Separator();
+            EditorGUILayout.PropertyField(timeStartYearField);
+            EditorGUILayout.PropertyField(timeEndYearField);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
             {
