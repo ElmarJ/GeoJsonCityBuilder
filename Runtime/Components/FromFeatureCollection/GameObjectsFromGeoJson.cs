@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using GeoJsonCityBuilder.Data;
 using UnityEditor;
@@ -9,7 +9,7 @@ using UnityEngine.ProBuilder.MeshOperations;
 namespace GeoJsonCityBuilder
 {
     [ExecuteAlways]
-    public class PrefabsFromGeoJson : MonoBehaviour
+    public class GameObjectsFromGeoJson : MonoBehaviour
     {
         public TextAsset geoJsonFile;
         public WorldPositionAnchor worldPosition;
@@ -17,6 +17,5 @@ namespace GeoJsonCityBuilder
         public GameObject prefab;
         public string timeStartYearField;
         public string timeEndYearField;
-
     }
 }

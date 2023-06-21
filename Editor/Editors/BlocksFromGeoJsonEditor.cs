@@ -11,8 +11,8 @@ namespace GeoJsonCityBuilder.Editor
     public class BlocksFromGeoJsonEditor : UnityEditor.Editor
     {
         SerializedProperty geoJsonFile;
-        SerializedProperty worldPositionAnchor;
-        SerializedProperty basePrefab;
+        SerializedProperty worldPosition;
+        SerializedProperty prefab;
         SerializedProperty featureTypeFilter;
         SerializedProperty heightMin;
         SerializedProperty heightMax;
@@ -32,8 +32,8 @@ namespace GeoJsonCityBuilder.Editor
         void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
-            worldPositionAnchor = serializedObject.FindProperty("worldPositionAnchor");
-            basePrefab = serializedObject.FindProperty("basePrefab");
+            worldPosition = serializedObject.FindProperty("worldPosition");
+            prefab = serializedObject.FindProperty("prefab");
             featureTypeFilter = serializedObject.FindProperty("featureTypeFilter");
             heightMin = serializedObject.FindProperty("heightMin");
             heightMax = serializedObject.FindProperty("heightMax");
@@ -55,8 +55,8 @@ namespace GeoJsonCityBuilder.Editor
         {
             serializedObject.Update();
             EditorGUILayout.PropertyField(geoJsonFile);
-            EditorGUILayout.PropertyField(worldPositionAnchor);
-            EditorGUILayout.PropertyField(basePrefab);
+            EditorGUILayout.PropertyField(worldPosition);
+            EditorGUILayout.PropertyField(prefab);
             EditorGUILayout.PropertyField(featureTypeFilter);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(heightMin);

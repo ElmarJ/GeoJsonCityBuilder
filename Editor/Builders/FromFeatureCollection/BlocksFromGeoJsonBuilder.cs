@@ -11,66 +11,22 @@ using UnityEngine.ProBuilder;
 
 namespace GeoJsonCityBuilder.Editor
 {
-    public class BlocksFromGeoJsonBuilder
+    public class BlocksFromGeoJsonBuilder: GameObjectsFromGeoJsonBuilder<BlocksFromGeoJson>
     {
-        List<Feature> m_features;
+        public BlocksFromGeoJsonBuilder(BlocksFromGeoJson component): base(component) { }
 
-        public BlocksFromGeoJson Component { get; private set; }
-
-        public BlocksFromGeoJsonBuilder(BlocksFromGeoJson blocksFromGeoJsonComponent)
+        protected override void BuildFromFeatures()
         {
-            this.Component = blocksFromGeoJsonComponent;
-        }
-
-        private void DeserializeGeoJson()
-        {
-            var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
-            var filteredFeatures =
-                from feature in geoJSON.Features
-                select feature;
-
-            if (this.Component.featureTypeFilter != null && this.Component.featureTypeFilter != "")
-            {
-                filteredFeatures =
-                    from feature in filteredFeatures
-                    where feature.Properties["type"].ToString() == this.Component.featureTypeFilter
-                    select feature;
-            }
-            this.m_features = filteredFeatures.ToList();
-        }
-
-        public void RemoveAllChildren()
-        {
-            if (Application.IsPlaying(this.Component.gameObject))
-            {
-                foreach (Transform child in this.Component.transform)
-                {
-                    GameObject.Destroy(child.gameObject);
-                }
-            }
-            else
-            {
-                while (this.Component.transform.childCount > 0)
-                {
-                    GameObject.DestroyImmediate(this.Component.transform.GetChild(0).gameObject);
-                }
-            }
-        }
-
-        public void Rebuild()
-        {
-            this.RemoveAllChildren();
-            this.DeserializeGeoJson();
-
-            var origin = Component.worldPositionAnchor.SceneOrigin;
+            var origin = Component.worldPosition.SceneOrigin;
 
             int i = 0;
 
             foreach (var feature in this.m_features)
             {
+                // TODO: handle incorrect feature type (throw exception)
                 var geometry = feature.Geometry as Polygon;
 
-                var block = this.Component.basePrefab ? GameObject.Instantiate(this.Component.basePrefab) : new GameObject(); 
+                var block = this.Component.prefab ? GameObject.Instantiate(this.Component.prefab) : new GameObject();
                 block.name = this.Component.featureTypeFilter + i++.ToString();
                 block.transform.parent = this.Component.transform;
                 block.transform.position = this.Component.transform.position;
@@ -85,7 +41,7 @@ namespace GeoJsonCityBuilder.Editor
 
                 var controller = block.AddComponent<BlockFromPolygon>();
 
-                double height = !feature.Properties.ContainsKey("height") || feature.Properties["height"] == null  ? 0 : (double)feature.Properties["height"];
+                double height = !feature.Properties.ContainsKey("height") || feature.Properties["height"] == null ? 0 : (double)feature.Properties["height"];
                 controller.height = height == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : (float)height;
 
                 controller.sideMaterial = this.Component.sideMaterials[Random.Range(0, this.Component.sideMaterials.Count)];
@@ -95,7 +51,7 @@ namespace GeoJsonCityBuilder.Editor
                 controller.pointedRoof = this.Component.pointedRoofTops;
                 controller.raiseFrontAndBackFacadeTop = this.Component.raiseFacades;
 
-                controller.floorPolygon = new List<Vector3>(from coor in geometry.Coordinates[0].Coordinates select new Vector3(coor.ToCoordinate().ToLocalGrid(origin).x, 0, coor.ToCoordinate().ToLocalGrid(origin).y));
+                controller.polygon = new List<Vector3>(from coor in geometry.Coordinates[0].Coordinates select new Vector3(coor.ToCoordinate().ToLocalGrid(origin).x, 0, coor.ToCoordinate().ToLocalGrid(origin).y));
                 var blockBuilder = new BlockFromPolygonBuilder(controller);
                 blockBuilder.Draw();
             }

@@ -8,7 +8,7 @@ namespace GeoJsonCityBuilder.Editor
     public class BordersFromGeoJsonEditor : UnityEditor.Editor
     {
         SerializedProperty geoJsonFile;
-        SerializedProperty worldPositionAnchor;
+        SerializedProperty worldPosition;
         SerializedProperty height;
         SerializedProperty outerExtension;
         SerializedProperty innerExtension;
@@ -18,7 +18,7 @@ namespace GeoJsonCityBuilder.Editor
         void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
-            worldPositionAnchor = serializedObject.FindProperty("worldPositionAnchor");
+            worldPosition = serializedObject.FindProperty("worldPosition");
             height = serializedObject.FindProperty("height");
             outerExtension = serializedObject.FindProperty("outerExtension");
             innerExtension = serializedObject.FindProperty("innerExtension");
@@ -33,7 +33,7 @@ namespace GeoJsonCityBuilder.Editor
         {
             serializedObject.Update();
             EditorGUILayout.PropertyField(geoJsonFile);
-            EditorGUILayout.PropertyField(worldPositionAnchor);
+            EditorGUILayout.PropertyField(worldPosition);
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(height);
             EditorGUILayout.PropertyField(outerExtension);

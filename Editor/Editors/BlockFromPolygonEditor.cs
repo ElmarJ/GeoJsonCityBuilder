@@ -52,12 +52,12 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.PropertyField(raiseFrontAndBackFacadeTop);
             EditorGUILayout.PropertyField(leanForward);
 
-            if (controller.floorPolygon != null)
+            if (controller.polygon != null)
             {
                 showFloorPolygon = EditorGUILayout.BeginFoldoutHeaderGroup(showFloorPolygon, "Polygon");
                 if(showFloorPolygon)
                 {
-                    foreach (var coordinate in controller.floorPolygon)
+                    foreach (var coordinate in controller.polygon)
                     {
                         EditorGUILayout.LabelField(coordinate.ToString());
                     }
@@ -84,7 +84,7 @@ namespace GeoJsonCityBuilder.Editor
         {
             var controller = this.target as BlockFromPolygon;
 
-            controller.floorPolygon = new List<Vector3>() {
+            controller.polygon = new List<Vector3>() {
                 new Vector3( 5f, 0f, 10f),
                 new Vector3(-5f, 0f, 10f),
                 new Vector3(-5f, 0f,-10f),

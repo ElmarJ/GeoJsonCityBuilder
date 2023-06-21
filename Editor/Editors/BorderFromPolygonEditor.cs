@@ -60,7 +60,7 @@ namespace GeoJsonCityBuilder.Editor
         {
             var controller = this.target as BlockFromPolygon;
 
-            controller.floorPolygon = new List<Vector3>() {
+            controller.polygon = new List<Vector3>() {
                 new Vector3( 5f, 0f, 10f),
                 new Vector3(-5f, 0f, 10f),
                 new Vector3(-5f, 0f,-10f),

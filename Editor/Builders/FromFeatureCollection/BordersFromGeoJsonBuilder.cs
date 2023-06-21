@@ -10,51 +10,13 @@ using UnityEngine.ProBuilder;
 
 namespace GeoJsonCityBuilder.Editor
 {
-    public class BordersFromGeoJsonBuilder
+    public class BordersFromGeoJsonBuilder: GameObjectsFromGeoJsonBuilder<BordersFromGeoJson>
     {
-        List<Feature> m_features;
+        public BordersFromGeoJsonBuilder(BordersFromGeoJson component): base(component) { }
 
-        public BordersFromGeoJson Component { get; private set; }
-
-        public BordersFromGeoJsonBuilder(BordersFromGeoJson bordersFromGeoJsonComponent)
+        protected override void BuildFromFeatures()
         {
-            this.Component = bordersFromGeoJsonComponent;
-        }
-
-        private void DeserializeGeoJson()
-        {
-            var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
-            var features =
-                from feature in geoJSON.Features
-                select feature;
-
-            this.m_features = features.ToList();
-        }
-
-        public void RemoveAllChildren()
-        {
-            if (Application.IsPlaying(this.Component.gameObject))
-            {
-                foreach (Transform child in this.Component.transform)
-                {
-                    GameObject.Destroy(child.gameObject);
-                }
-            }
-            else
-            {
-                while (this.Component.transform.childCount > 0)
-                {
-                    GameObject.DestroyImmediate(this.Component.transform.GetChild(0).gameObject);
-                }
-            }
-        }
-
-        public void Rebuild()
-        {
-            this.RemoveAllChildren();
-            this.DeserializeGeoJson();
-
-            var origin = Component.worldPositionAnchor.SceneOrigin;
+            var origin = Component.worldPosition.SceneOrigin;
 
             int i = 0;
 
@@ -78,7 +40,7 @@ namespace GeoJsonCityBuilder.Editor
                 controller.material = this.Component.material;
                 controller.sideUvUnwrapSettings = this.Component.sideUvUnwrapSettings;
 
-                controller.floorPolygon = new List<Vector3>(from coor in geometry.Coordinates[0].Coordinates select new Vector3(coor.ToCoordinate().ToLocalGrid(origin).x, 0, coor.ToCoordinate().ToLocalGrid(origin).y));
+                controller.polygon = new List<Vector3>(from coor in geometry.Coordinates[0].Coordinates select new Vector3(coor.ToCoordinate().ToLocalGrid(origin).x, 0, coor.ToCoordinate().ToLocalGrid(origin).y));
 
                 var borderBuilder = new BorderFromPolygonBuilder(controller);
                 borderBuilder.Draw();

@@ -10,17 +10,17 @@ using GeoJSON.Net.Feature;
 
 namespace GeoJsonCityBuilder.Editor
 {
-    public class PrefabsFromGeoJsonBuilder
+    public abstract class GameObjectsFromGeoJsonBuilder<T> where T: GameObjectsFromGeoJson
     {
-        public PrefabsFromGeoJson Component
+        public T Component
         {
             get;
             private set;
         }
 
-        List<Feature> m_features;
+        protected List<Feature> m_features;
 
-        public PrefabsFromGeoJsonBuilder(PrefabsFromGeoJson component)
+        public GameObjectsFromGeoJsonBuilder(T component)
         {
             this.Component = component;
         }
@@ -59,26 +59,9 @@ namespace GeoJsonCityBuilder.Editor
         {
             this.RemoveAllChildren();
             this.DeserializeGeoJson();
-
-            foreach (Feature feature in this.m_features)
-            {
-                var point = feature.Geometry as Point;
-                var go = Object.Instantiate(this.Component.prefab, this.Component.transform);
-
-                // Todo: solve this, we shouldn't assign to positionComponent.
-                var worldOrigin = this.Component.worldPosition.SceneOrigin;
-                
-                var position = point.Coordinates.ToCoordinate().ToLocalPosition(worldOrigin, go.transform.position.y);
-                go.transform.localPosition = position;
-                go.transform.Rotate(0f, Random.Range(0f, 360f), 0, Space.Self);
-
-                var featureComponent = go.AddComponent<GeoJsonFeatureInstance>();
-                featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
-
-                var existenceController = go.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ContainsKey(this.Component.timeStartYearField) && feature.Properties[this.Component.timeStartYearField] != null ? (long)feature.Properties[this.Component.timeStartYearField] : -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ContainsKey(this.Component.timeEndYearField) && feature.Properties[this.Component.timeEndYearField] != null ? (long)feature.Properties[this.Component.timeEndYearField] : 9999;
-            }
+            this.BuildFromFeatures();
         }
+
+        protected abstract void BuildFromFeatures();
     }
 }

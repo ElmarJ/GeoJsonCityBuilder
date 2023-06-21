@@ -7,10 +7,8 @@ using UnityEngine.ProBuilder;
 namespace GeoJsonCityBuilder
 {
     [ExecuteAlways]
-    public class BordersFromGeoJson : MonoBehaviour
+    public class BordersFromGeoJson : GameObjectsFromGeoJson
     {
-        public WorldPositionAnchor worldPositionAnchor;
-        public TextAsset geoJsonFile;
         public float height;
         public float outerExtension;
         public float innerExtension;

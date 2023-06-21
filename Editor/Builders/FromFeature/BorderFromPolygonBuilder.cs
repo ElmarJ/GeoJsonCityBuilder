@@ -7,21 +7,16 @@ using UnityEngine.ProBuilder.MeshOperations;
 
 namespace GeoJsonCityBuilder.Editor
 {
-    public class BorderFromPolygonBuilder
+    public class BorderFromPolygonBuilder: MeshFromPolygonBuilder<BorderFromPolygon>
     {
-        public BorderFromPolygon BorderInfo { get; private set; }
-        public GameObject GameObject { get; private set; }
-
         private List<LinkedCorner> corners;
         private int n;
 
-        public BorderFromPolygonBuilder(BorderFromPolygon borderInfo)
+        public BorderFromPolygonBuilder(BorderFromPolygon borderInfo): base(borderInfo)
         {
-            this.BorderInfo = borderInfo;
-            this.GameObject = borderInfo.gameObject;
         }
 
-        public void Draw()
+        public override void Draw()
         {
             this.RemoveAllChildren();
             this.PopulateCornerList();
@@ -34,11 +29,11 @@ namespace GeoJsonCityBuilder.Editor
 
             var outerPolygon =
                 (from innerCorner in corners
-                select this.FindOuterPoint(innerCorner, BorderInfo.outerExtension, clockwise)).ToList();
+                select this.FindOuterPoint(innerCorner, BuilderInfo.outerExtension, clockwise)).ToList();
 
             var innerPolygon =
                 (from innerCorner in corners
-                select this.FindOuterPoint(innerCorner, BorderInfo.innerExtension, !clockwise)).ToList();
+                select this.FindOuterPoint(innerCorner, BuilderInfo.innerExtension, !clockwise)).ToList();
 
             for (int i = 0; i < n; i++)
             {
@@ -57,7 +52,7 @@ namespace GeoJsonCityBuilder.Editor
 
         private void PopulateCornerList()
         {
-           var basePolygon = this.BorderInfo.floorPolygon;
+           var basePolygon = this.BuilderInfo.polygon;
 
             this.n = basePolygon.Count;
             this.corners = new List<LinkedCorner>();
@@ -79,13 +74,13 @@ namespace GeoJsonCityBuilder.Editor
             segmentGo.transform.parent = this.GameObject.transform;
 
             var mesh = segmentGo.AddComponent<ProBuilderMesh>();
-            mesh.CreateShapeFromPolygon(floorPolygon, this.BorderInfo.height, false);
+            mesh.CreateShapeFromPolygon(floorPolygon, this.BuilderInfo.height, false);
 
-            mesh.SetMaterial(mesh.faces, this.BorderInfo.material);
+            mesh.SetMaterial(mesh.faces, this.BuilderInfo.material);
 
             foreach (var face in mesh.faces)
             {
-                face.uv = this.BorderInfo.sideUvUnwrapSettings;
+                face.uv = this.BuilderInfo.sideUvUnwrapSettings;
             }
 
             mesh.ToMesh();
