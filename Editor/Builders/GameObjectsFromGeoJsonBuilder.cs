@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using GeoJSON.Net.Feature;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Builders
 {
     public abstract class GameObjectsFromGeoJsonBuilder<T> where T: GameObjectsFromGeoJson
     {
@@ -62,6 +62,30 @@ namespace GeoJsonCityBuilder.Editor
             this.BuildFromFeatures();
         }
 
-        protected abstract void BuildFromFeatures();
+        private void BuildFromFeatures()
+        {
+            int i = 1;
+            foreach (Feature feature in this.m_features)
+            {
+                AddFeature(feature, i++);
+            }
+        }
+
+        protected virtual GameObject AddFeature(Feature feature, int i)
+        {
+            var gameObject = this.Component.prefab ? GameObject.Instantiate(this.Component.prefab) : new GameObject();
+            gameObject.name = this.Component.featureTypeFilter + i.ToString();
+            gameObject.transform.parent = this.Component.transform;
+            gameObject.transform.position = this.Component.transform.position;
+
+            var featureComponent = gameObject.AddComponent<GeoJsonFeatureInstance>();
+            featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
+
+            var existenceController = gameObject.AddComponent<ExistenceController>();
+            existenceController.existencePeriodStart = feature.Properties.ContainsKey(this.Component.timeStartYearField) && feature.Properties[this.Component.timeStartYearField] != null ? (long)feature.Properties[this.Component.timeStartYearField] : -9999;
+            existenceController.existencePeriodEnd = feature.Properties.ContainsKey(this.Component.timeEndYearField) && feature.Properties[this.Component.timeEndYearField] != null ? (long)feature.Properties[this.Component.timeEndYearField] : 9999;
+
+            return gameObject;
+        }
     }
 }

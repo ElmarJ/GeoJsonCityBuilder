@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
 
     [CustomEditor(typeof(GeoJsonFeatureInstance))]
@@ -16,7 +16,7 @@ namespace GeoJsonCityBuilder.Editor
         {
         }
 
-        public override void OnInspectorGUI()
+        public override void OnInspectorGUI() 
         {
             var featureComponent = this.serializedObject.targetObject as GeoJsonFeatureInstance;
             {

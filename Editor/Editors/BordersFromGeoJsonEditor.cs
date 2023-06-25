@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
     [CustomEditor(typeof(BordersFromGeoJson))]
     [CanEditMultipleObjects]
@@ -13,7 +13,7 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty outerExtension;
         SerializedProperty innerExtension;
         SerializedProperty material;
-        BordersFromGeoJsonBuilder builder;
+        Builders.BordersFromGeoJsonBuilder builder;
 
         void OnEnable()
         {
@@ -24,7 +24,7 @@ namespace GeoJsonCityBuilder.Editor
             innerExtension = serializedObject.FindProperty("innerExtension");
             material = serializedObject.FindProperty("material");
 
-            builder = new BordersFromGeoJsonBuilder(this.TargetObject);
+            builder = new Builders.BordersFromGeoJsonBuilder(this.TargetObject);
         }
 
         public BordersFromGeoJson TargetObject { get => this.serializedObject.targetObject as BordersFromGeoJson; }

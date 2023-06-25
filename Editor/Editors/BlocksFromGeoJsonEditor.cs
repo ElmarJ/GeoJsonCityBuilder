@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
 
     [CustomEditor(typeof(BlocksFromGeoJson))]
@@ -27,7 +27,7 @@ namespace GeoJsonCityBuilder.Editor
         SerializedProperty timeStartYearField;
         SerializedProperty timeEndYearField;
 
-        BlocksFromGeoJsonBuilder builder;
+        Builders.BlocksFromGeoJsonBuilder builder;
 
         void OnEnable()
         {
@@ -46,7 +46,7 @@ namespace GeoJsonCityBuilder.Editor
             timeStartYearField = serializedObject.FindProperty("timeStartYearField");
             timeEndYearField = serializedObject.FindProperty("timeEndYearField");
 
-            builder = new BlocksFromGeoJsonBuilder(this.TargetObject);
+            builder = new Builders.BlocksFromGeoJsonBuilder(this.TargetObject);
         }
 
         public BlocksFromGeoJson TargetObject { get => this.serializedObject.targetObject as BlocksFromGeoJson; }

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Builders
 {
     public class BorderFromPolygonBuilder: MeshFromPolygonBuilder<BorderFromPolygon>
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Builders
 {
     [CustomEditor(typeof(PrefabsFromGeoJson))]
     [CanEditMultipleObjects]

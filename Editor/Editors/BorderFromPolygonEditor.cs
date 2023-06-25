@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
 
     [CustomEditor(typeof(BorderFromPolygon))]
@@ -49,7 +49,7 @@ namespace GeoJsonCityBuilder.Editor
             }
             if (GUILayout.Button("Draw"))
             {
-                var builder = new BorderFromPolygonBuilder(controller);
+                var builder = new Builders.BorderFromPolygonBuilder(controller);
                 builder.Draw();
             }
             EditorGUILayout.EndHorizontal();

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Builders
 {
     public abstract class MeshFromPolygonBuilder<T> where T:MeshFromPolygon
     {
