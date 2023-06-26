@@ -17,6 +17,6 @@ namespace GeoJsonCityBuilder
         public GameObject prefab;
         public string timeStartYearField;
         public string timeEndYearField;
-        public readonly Dictionary<string, string> jsonBinding = new();
+        public List<GeoJsonBinding> geoJsonBindings = new();
     }
 }

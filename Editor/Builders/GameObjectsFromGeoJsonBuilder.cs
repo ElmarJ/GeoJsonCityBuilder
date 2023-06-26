@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 
 using System.Linq;
-using GeoJSON.Net.Geometry;
 using Newtonsoft.Json;
-using GeoJsonCityBuilder.Data;
 using UnityEditor;
 using UnityEngine;
 using GeoJSON.Net.Feature;
@@ -67,7 +65,8 @@ namespace GeoJsonCityBuilder.Editor.Builders
             int i = 1;
             foreach (Feature feature in this.m_features)
             {
-                AddFeature(feature, i++);
+                var go = AddFeature(feature, i++);
+                ApplyBindings(go, feature);
             }
         }
 
@@ -86,6 +85,27 @@ namespace GeoJsonCityBuilder.Editor.Builders
             existenceController.existencePeriodEnd = feature.Properties.ContainsKey(this.Component.timeEndYearField) && feature.Properties[this.Component.timeEndYearField] != null ? (long)feature.Properties[this.Component.timeEndYearField] : 9999;
 
             return gameObject;
+        }
+
+        private void ApplyBindings(GameObject gameObject, Feature feature)
+        {
+            foreach (var binding in this.Component.geoJsonBindings)
+            {
+                var component = gameObject.GetComponent(binding.componentName);
+                var serializedObject = new SerializedObject(component);
+                var property = serializedObject.FindProperty(binding.componentField);
+
+                if (feature.Properties.ContainsKey(binding.geoJsonProperty) && feature.Properties[binding.geoJsonProperty] != null)
+                {
+                    property.boxedValue = feature.Properties[binding.geoJsonProperty];
+                }
+                else
+                {
+                    // property.stringValue = binding.defaultValue;
+                }
+
+                serializedObject.ApplyModifiedProperties();
+            }
         }
     }
 }
