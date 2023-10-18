@@ -32,6 +32,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
             controller.topMaterial = this.Component.topMaterial;
             controller.bottomMaterial = this.Component.bottomMaterial;
             controller.sideUvUnwrapSettings = this.Component.sideUvUnwrapSettings;
+            
             controller.pointedRoof = this.Component.pointedRoofTops;
             controller.raiseFrontAndBackFacadeTop = this.Component.raiseFacades;
 

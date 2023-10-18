@@ -25,33 +25,53 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
         public override void Draw()
         {
-            var mesh = this.GameObject.GetComponent<ProBuilderMesh>();
-            if (mesh == null)
-            {
-                mesh = this.GameObject.AddComponent<ProBuilderMesh>();
-            }
+            var mesh = this.GameObject.GetComponent<ProBuilderMesh>() ?? this.GameObject.AddComponent<ProBuilderMesh>();
             
-            if (this.BuilderInfo.polygon.Count < 3) {
+            // Check if there are enough points to create a polygon:
+            if (this.BuilderInfo.polygon.Count < 3)
+            {
                 return;
             }
+            
+            // Sanitize the polygon:
+            this.SanitizePolygon();
 
+            // Create the mesh:
+            mesh.CreateShapeFromPolygon(this.BuilderInfo.polygon, this.BuilderInfo.height, false);
+
+            this.SetMaterials();
+            this.SetUVSettings();
+
+            // Store the mesh:
+            this.pb.ToMesh();
+            this.pb.Refresh();
+
+            // Label the faces of the mesh:
+            this.FindSpecialFaces();
+
+            // Lean the building forward:
+            this.LeanForward();
+
+            // Add a pointed roof:
+            if (this.BuilderInfo.pointedRoof)
+            {
+                this.AddPointedRoof();
+            }
+        }
+
+        private void SanitizePolygon()
+        {
+            // Remove last point if it's the same as the first point:
             var first = this.BuilderInfo.polygon.First();
             var last = this.BuilderInfo.polygon.Last();
             if (first.x == last.x && first.y == last.y && first.z == last.z)
             {
                 this.BuilderInfo.polygon.Remove(this.BuilderInfo.polygon.Last());
             }
+        }
 
-            mesh.CreateShapeFromPolygon(this.BuilderInfo.polygon, this.BuilderInfo.height, false);
-
-            this.pb = GameObject.GetComponent<ProBuilderMesh>();
-            if (this.pb.faceCount > 2)
-            {
-                this.pb.SetMaterial(this.pb.faces, this.BuilderInfo.sideMaterial);
-                this.pb.SetMaterial(new List<Face>() { this.pb.faces[0] }, this.BuilderInfo.topMaterial);
-                this.pb.SetMaterial(new List<Face>() { this.pb.faces[1] }, this.BuilderInfo.bottomMaterial);
-            }
-
+        private void SetUVSettings()
+        {
             var i = 0;
             foreach (var face in this.pb.faces)
             {
@@ -62,20 +82,20 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 }
                 i++;
             }
-            this.pb.ToMesh();
-            this.pb.Refresh();
+        }
 
-            this.FindSpecialSides();
-
-            this.LeanForward();
-
-            if (this.BuilderInfo.pointedRoof)
+        private void SetMaterials()
+        {
+            this.pb = GameObject.GetComponent<ProBuilderMesh>();
+            if (this.pb.faceCount > 2)
             {
-                this.AddPointedRoof();
+                this.pb.SetMaterial(this.pb.faces, this.BuilderInfo.sideMaterial);
+                this.pb.SetMaterial(new List<Face>() { this.pb.faces[0] }, this.BuilderInfo.topMaterial);
+                this.pb.SetMaterial(new List<Face>() { this.pb.faces[1] }, this.BuilderInfo.bottomMaterial);
             }
         }
 
-        public void FindSpecialSides()
+        private void FindSpecialFaces()
         {
             if (this.pb.faces.Count < 5)
             {
