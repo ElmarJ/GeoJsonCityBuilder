@@ -4,7 +4,7 @@
 
 Unity Package to recreate a 3D-city from GeoJSON files. Currently allows to create extruded objects (e.g. buildings) from polygons and to place prefabs on points.
 
-See for an example on what can be achieved and how to use it, the [Waterlooplein 3D project](https://github.com/ElmarJ/Waterlooplein3D).
+See for an example on what can be achieved and how to use it, the [Waterlooplein Time Machine project](https://github.com/ElmarJ/waterlooplein-timemachine).
 
 ## Installation
 
