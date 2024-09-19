@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 using System.Linq;
+using GeoJSON.Net;
 using GeoJSON.Net.Feature;
 using GeoJSON.Net.Geometry;
 using GeoJsonCityBuilder.Data;
@@ -26,6 +27,7 @@ namespace GeoJsonCityBuilder.Editor
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
             var features =
                 from feature in geoJSON.Features
+                where feature.Geometry.Type == GeoJSONObjectType.Polygon
                 select feature;
 
             this.m_features = features.ToList();
@@ -49,10 +51,12 @@ namespace GeoJsonCityBuilder.Editor
             }
         }
 
-        public void Rebuild()
+        public void Rebuild(int seed = 42)
         {
             this.RemoveAllChildren();
             this.DeserializeGeoJson();
+
+            Random.InitState(seed);
 
             var origin = Component.worldPositionAnchor.SceneOrigin;
 

@@ -30,9 +30,9 @@ namespace GeoJsonCityBuilder.Editor
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
             var filteredFeatures =
                 from feature in geoJSON.Features
-                where this.Component.featureTypeFilter == "" || (feature.Properties.ContainsKey("type")
+                where feature.Geometry.Type == GeoJSON.Net.GeoJSONObjectType.Point && (this.Component.featureTypeFilter == "" || (feature.Properties.ContainsKey("type")
                                                                  && feature.Properties["type"] != null
-                                                                 && feature.Properties["type"].ToString() == this.Component.featureTypeFilter)
+                                                                 && feature.Properties["type"].ToString() == this.Component.featureTypeFilter))
                 select feature as Feature;
             this.m_features = filteredFeatures.ToList();
         }
@@ -55,10 +55,12 @@ namespace GeoJsonCityBuilder.Editor
             }
         }
 
-        public void Rebuild()
+        public void Rebuild(int seed = 42)
         {
             this.RemoveAllChildren();
             this.DeserializeGeoJson();
+
+            Random.InitState(seed);
 
             foreach (Feature feature in this.m_features)
             {
@@ -74,6 +76,13 @@ namespace GeoJsonCityBuilder.Editor
 
                 var featureComponent = go.AddComponent<GeoJsonFeatureInstance>();
                 featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
+                foreach (var property in feature.Properties)
+                {
+                    if (property.Value != null)
+                    {
+                        featureComponent.Properties[property.Key] = property.Value;
+                    }
+                }
 
                 var existenceController = go.AddComponent<ExistenceController>();
                 existenceController.existencePeriodStart = feature.Properties.ContainsKey(this.Component.timeStartYearField) && feature.Properties[this.Component.timeStartYearField] != null ? (long)feature.Properties[this.Component.timeStartYearField] : -9999;

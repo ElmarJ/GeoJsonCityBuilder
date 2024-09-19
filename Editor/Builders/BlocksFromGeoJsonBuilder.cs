@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 
 using System.Linq;
+using GeoJSON.Net;
 using GeoJSON.Net.Feature;
 using GeoJSON.Net.Geometry;
 using GeoJsonCityBuilder;
@@ -24,9 +26,15 @@ namespace GeoJsonCityBuilder.Editor
 
         private void DeserializeGeoJson()
         {
+            if(this.Component.geoJsonFile == null)
+            {
+                Debug.LogError($"GeoJson file not set on {this.Component.gameObject.name}");
+                return;
+            }
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
             var filteredFeatures =
                 from feature in geoJSON.Features
+                where feature.Geometry.Type == GeoJSONObjectType.Polygon
                 select feature;
 
             if (this.Component.featureTypeFilter != null && this.Component.featureTypeFilter != "")
@@ -50,17 +58,24 @@ namespace GeoJsonCityBuilder.Editor
             }
             else
             {
-                while (this.Component.transform.childCount > 0)
+                for(int i = this.Component.transform.childCount - 1; i >= 0; i--)
                 {
                     GameObject.DestroyImmediate(this.Component.transform.GetChild(0).gameObject);
+                }
+
+                if (this.Component.transform.childCount > 0)
+                {
+                    Debug.LogError("Failed to remove all children");
                 }
             }
         }
 
-        public void Rebuild()
+        public void Rebuild(int seed = 42)
         {
             this.RemoveAllChildren();
             this.DeserializeGeoJson();
+
+            UnityEngine.Random.InitState(seed);
 
             var origin = Component.worldPositionAnchor.SceneOrigin;
 
@@ -77,6 +92,13 @@ namespace GeoJsonCityBuilder.Editor
 
                 var featureComponent = block.AddComponent<GeoJsonFeatureInstance>();
                 featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
+                foreach (var property in feature.Properties)
+                {
+                    if (property.Value != null)
+                    {
+                        featureComponent.Properties[property.Key] = property.Value;
+                    }
+                }
 
 
                 var existenceController = block.AddComponent<ExistenceController>();
@@ -86,9 +108,9 @@ namespace GeoJsonCityBuilder.Editor
                 var controller = block.AddComponent<BlockFromPolygon>();
 
                 double height = !feature.Properties.ContainsKey("height") || feature.Properties["height"] == null  ? 0 : (double)feature.Properties["height"];
-                controller.height = height == 0 ? Random.Range(this.Component.heightMin, this.Component.heightMax) : (float)height;
+                controller.height = height == 0 ? UnityEngine.Random.Range(this.Component.heightMin, this.Component.heightMax) : (float)height;
 
-                controller.sideMaterial = this.Component.sideMaterials[Random.Range(0, this.Component.sideMaterials.Count)];
+                controller.sideMaterial = this.Component.sideMaterials[UnityEngine.Random.Range(0, this.Component.sideMaterials.Count)];
                 controller.topMaterial = this.Component.topMaterial;
                 controller.bottomMaterial = this.Component.bottomMaterial;
                 controller.sideUvUnwrapSettings = this.Component.sideUvUnwrapSettings;
