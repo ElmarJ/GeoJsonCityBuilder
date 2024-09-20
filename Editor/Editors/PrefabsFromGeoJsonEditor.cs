@@ -1,25 +1,24 @@
 //C# Example (LookAtPointEditor.cs)
-using UnityEngine;
+using GeoJsonCityBuilder.Components;
+using GeoJsonCityBuilder.Editor.Builders;
 using UnityEditor;
+using UnityEngine;
 
-
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
     [CustomEditor(typeof(PrefabsFromGeoJson))]
     [CanEditMultipleObjects]
     public class PrefabsFromGeoJsonEditor : UnityEditor.Editor
     {
-        SerializedProperty geoJsonFile;
-        SerializedProperty featureTypeFilter;
-        SerializedProperty worldPosition;
-        SerializedProperty prefab;
-        SerializedProperty timeStartYearField;
-        SerializedProperty timeEndYearField;
+        private SerializedProperty geoJsonFile;
+        private SerializedProperty featureTypeFilter;
+        private SerializedProperty worldPosition;
+        private SerializedProperty prefab;
+        private SerializedProperty timeStartYearField;
+        private SerializedProperty timeEndYearField;
+        private PrefabsFromGeoJsonBuilder builder;
 
-
-        PrefabsFromGeoJsonBuilder builder;
-
-        void OnEnable()
+        private void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
             featureTypeFilter = serializedObject.FindProperty("featureTypeFilter");
@@ -28,7 +27,7 @@ namespace GeoJsonCityBuilder.Editor
             timeStartYearField = serializedObject.FindProperty("timeStartYearField");
             timeEndYearField = serializedObject.FindProperty("timeEndYearField");
 
-            builder = new PrefabsFromGeoJsonBuilder(this.serializedObject.targetObject as PrefabsFromGeoJson);
+            builder = new PrefabsFromGeoJsonBuilder(serializedObject.targetObject as PrefabsFromGeoJson);
         }
 
         public override void OnInspectorGUI()

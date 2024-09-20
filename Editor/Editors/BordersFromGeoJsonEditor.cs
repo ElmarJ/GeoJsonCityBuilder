@@ -1,21 +1,23 @@
-using UnityEngine;
+using GeoJsonCityBuilder.Components;
+using GeoJsonCityBuilder.Editor.Builders;
 using UnityEditor;
+using UnityEngine;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
     [CustomEditor(typeof(BordersFromGeoJson))]
     [CanEditMultipleObjects]
     public class BordersFromGeoJsonEditor : UnityEditor.Editor
     {
-        SerializedProperty geoJsonFile;
-        SerializedProperty worldPositionAnchor;
-        SerializedProperty height;
-        SerializedProperty outerExtension;
-        SerializedProperty innerExtension;
-        SerializedProperty material;
-        BordersFromGeoJsonBuilder builder;
+        private SerializedProperty geoJsonFile;
+        private SerializedProperty worldPositionAnchor;
+        private SerializedProperty height;
+        private SerializedProperty outerExtension;
+        private SerializedProperty innerExtension;
+        private SerializedProperty material;
+        private BordersFromGeoJsonBuilder builder;
 
-        void OnEnable()
+        private void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
             worldPositionAnchor = serializedObject.FindProperty("worldPositionAnchor");
@@ -24,10 +26,10 @@ namespace GeoJsonCityBuilder.Editor
             innerExtension = serializedObject.FindProperty("innerExtension");
             material = serializedObject.FindProperty("material");
 
-            builder = new BordersFromGeoJsonBuilder(this.TargetObject);
+            builder = new BordersFromGeoJsonBuilder(TargetObject);
         }
 
-        public BordersFromGeoJson TargetObject { get => this.serializedObject.targetObject as BordersFromGeoJson; }
+        public BordersFromGeoJson TargetObject { get => serializedObject.targetObject as BordersFromGeoJson; }
 
         public override void OnInspectorGUI()
         {
@@ -42,12 +44,12 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
             {
-                this.builder.RemoveAllChildren();
+                builder.RemoveAllChildren();
             }
             if (GUILayout.Button("Generate"))
             {
-                this.builder.Rebuild();
-                
+                builder.Rebuild();
+
             }
             EditorGUILayout.EndHorizontal();
             serializedObject.ApplyModifiedProperties();

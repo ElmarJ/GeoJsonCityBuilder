@@ -1,35 +1,33 @@
 //C# Example (LookAtPointEditor.cs)
-using UnityEngine;
+using GeoJsonCityBuilder.Components;
+using GeoJsonCityBuilder.Editor.Builders;
 using UnityEditor;
+using UnityEngine;
 
-
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
 
     [CustomEditor(typeof(BlocksFromGeoJson))]
     [CanEditMultipleObjects]
     public class BlocksFromGeoJsonEditor : UnityEditor.Editor
     {
-        SerializedProperty geoJsonFile;
-        SerializedProperty worldPositionAnchor;
-        SerializedProperty basePrefab;
-        SerializedProperty featureTypeFilter;
-        SerializedProperty heightMin;
-        SerializedProperty heightMax;
-        SerializedProperty topMaterial;
-        SerializedProperty sideMaterials;
-        SerializedProperty sideUvUnwrapSettings;
+        private SerializedProperty geoJsonFile;
+        private SerializedProperty worldPositionAnchor;
+        private SerializedProperty basePrefab;
+        private SerializedProperty featureTypeFilter;
+        private SerializedProperty heightMin;
+        private SerializedProperty heightMax;
+        private SerializedProperty topMaterial;
+        private SerializedProperty sideMaterials;
+        private SerializedProperty sideUvUnwrapSettings;
+        private SerializedProperty bottomMaterial;
+        private SerializedProperty pointedRoofTops;
+        private SerializedProperty raiseFacades;
+        private SerializedProperty timeStartYearField;
+        private SerializedProperty timeEndYearField;
+        private BlocksFromGeoJsonBuilder builder;
 
-        SerializedProperty bottomMaterial;
-        SerializedProperty pointedRoofTops;
-        SerializedProperty raiseFacades;
-
-        SerializedProperty timeStartYearField;
-        SerializedProperty timeEndYearField;
-
-        BlocksFromGeoJsonBuilder builder;
-
-        void OnEnable()
+        private void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
             worldPositionAnchor = serializedObject.FindProperty("worldPositionAnchor");
@@ -46,10 +44,10 @@ namespace GeoJsonCityBuilder.Editor
             timeStartYearField = serializedObject.FindProperty("timeStartYearField");
             timeEndYearField = serializedObject.FindProperty("timeEndYearField");
 
-            builder = new BlocksFromGeoJsonBuilder(this.TargetObject);
+            builder = new BlocksFromGeoJsonBuilder(TargetObject);
         }
 
-        public BlocksFromGeoJson TargetObject { get => this.serializedObject.targetObject as BlocksFromGeoJson; }
+        public BlocksFromGeoJson TargetObject => serializedObject.targetObject as BlocksFromGeoJson;
 
         public override void OnInspectorGUI()
         {
@@ -74,11 +72,11 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
             {
-                this.builder.RemoveAllChildren();
+                builder.RemoveAllChildren();
             }
             if (GUILayout.Button("Generate"))
             {
-                this.builder.Rebuild();
+                builder.Rebuild();
             }
             EditorGUILayout.EndHorizontal();
             serializedObject.ApplyModifiedProperties();

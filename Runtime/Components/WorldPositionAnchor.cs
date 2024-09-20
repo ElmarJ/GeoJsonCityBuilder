@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using GeoJsonCityBuilder.Data;
+﻿using GeoJsonCityBuilder.Data;
 using UnityEngine;
 
-namespace GeoJsonCityBuilder
+namespace GeoJsonCityBuilder.Components
 {
     public class WorldPositionAnchor : MonoBehaviour
     {
@@ -25,11 +23,11 @@ namespace GeoJsonCityBuilder
             }
         }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.white;
-        Gizmos.DrawSphere(transform.position, 1);
-        Gizmos.DrawIcon(transform.position, "BuildSettings.Web", true);
-    }
+        void OnDrawGizmos()
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawSphere(transform.position, 1);
+            Gizmos.DrawIcon(transform.position, "BuildSettings.Web", true);
+        }
     }
 }

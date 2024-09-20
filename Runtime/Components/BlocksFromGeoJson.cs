@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
-using GeoJsonCityBuilder.Data;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
-namespace GeoJsonCityBuilder
+namespace GeoJsonCityBuilder.Components
 {
     [ExecuteAlways]
     public class BlocksFromGeoJson : MonoBehaviour
@@ -18,7 +16,7 @@ namespace GeoJsonCityBuilder
         public Material topMaterial;
         public List<Material> sideMaterials;
         public Material bottomMaterial;
-        public AutoUnwrapSettings sideUvUnwrapSettings = new AutoUnwrapSettings();
+        public AutoUnwrapSettings sideUvUnwrapSettings = new();
         public bool pointedRoofTops = false;
         public bool raiseFacades = false;
         public string timeStartYearField;

@@ -20,7 +20,7 @@ namespace GeoJsonCityBuilder.Data
 
         public Vector2 ToLocalGrid(Coordinate gridOrigin) => MeterVectorFromCoordinates(gridOrigin, this);
         public Coordinate LocalGridTransform(Vector2 transformVector) => CoordinateFromMeterVector(this, transformVector);
-        
+
         public Vector3 ToLocalPosition(Coordinate gridOrigin, float height)
         {
             var planePosition = ToLocalGrid(gridOrigin);
@@ -94,7 +94,7 @@ namespace GeoJsonCityBuilder.Data
                 dLon *= -1;
             }
             var lon = origin.Lon - Deg(dLon);
-            
+
             return new Coordinate((float)lon, (float)lat);
         }
 

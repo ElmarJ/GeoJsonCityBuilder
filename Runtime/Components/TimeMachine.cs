@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GeoJsonCityBuilder
+namespace GeoJsonCityBuilder.Components
 {
     [ExecuteAlways]
     public class TimeMachine : MonoBehaviour

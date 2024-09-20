@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GeoJsonFeatureInstance: MonoBehaviour
+namespace GeoJsonCityBuilder.Components
 {
-    public Dictionary<string,object> Properties {get; set;}
+    public class GeoJsonFeatureInstance : MonoBehaviour
+    {
+        public Dictionary<string, object> Properties { get; set; }
+    }
 }

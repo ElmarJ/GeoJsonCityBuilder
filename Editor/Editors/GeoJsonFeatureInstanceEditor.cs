@@ -1,24 +1,20 @@
 //C# Example (LookAtPointEditor.cs)
-using UnityEngine;
+using GeoJsonCityBuilder.Components;
 using UnityEditor;
 
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
 
     [CustomEditor(typeof(GeoJsonFeatureInstance))]
     [CanEditMultipleObjects]
     public class GeoJsonFeatureInstanceEditor : UnityEditor.Editor
     {
-        bool showCustomFeatures = false;
-
-        void OnEnable()
-        {
-        }
+        private bool showCustomFeatures = false;
 
         public override void OnInspectorGUI()
         {
-            var featureComponent = this.serializedObject.targetObject as GeoJsonFeatureInstance;
+            var featureComponent = serializedObject.targetObject as GeoJsonFeatureInstance;
             {
                 if (featureComponent.Properties != null)
                 {

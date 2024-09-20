@@ -1,12 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using GeoJsonCityBuilder.Data;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
+﻿using UnityEngine;
 
-namespace GeoJsonCityBuilder
+namespace GeoJsonCityBuilder.Components
 {
     [ExecuteAlways]
     public class PrefabsFromGeoJson : MonoBehaviour

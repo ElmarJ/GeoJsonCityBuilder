@@ -1,109 +1,118 @@
 using System.Collections.Generic;
 using System.Linq;
+using GeoJsonCityBuilder.Components;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Builders
 {
     public class BlockFromPolygonBuilder
     {
         public BlockFromPolygon BlockInfo { get; private set; }
         public GameObject GameObject { get; private set; }
-        Face topFace;
-        Edge topFaceShortestEdge = new Edge();
-        Edge topFaceShortestEdgeCommon = new Edge();
-        Edge topFaceOppositeEdge = new Edge();
-        Edge topFaceOppositeEdgeCommon = new Edge();
-        Edge frontFaceTopEdge = new Edge();
-        Edge backFaceTopEdge = new Edge();
+
+        private Face topFace;
+        private Edge topFaceShortestEdge = new();
+        private Edge topFaceShortestEdgeCommon = new();
+        private Edge topFaceOppositeEdge = new();
+        private Edge topFaceOppositeEdgeCommon = new();
+        private Edge frontFaceTopEdge = new();
+        private Edge backFaceTopEdge = new();
 
         public BlockFromPolygonBuilder(BlockFromPolygon blockInfo)
         {
-            this.BlockInfo = blockInfo;
-            this.GameObject = blockInfo.gameObject;
+            BlockInfo = blockInfo;
+            GameObject = blockInfo.gameObject;
         }
 
         private ProBuilderMesh pb;
-
-        bool fourSides = false;
+        private bool fourSides = false;
         public void Draw()
         {
-            var mesh = this.GameObject.GetComponent<ProBuilderMesh>();
-            if (mesh == null)
+            if (!GameObject.TryGetComponent<ProBuilderMesh>(out var mesh))
             {
-                mesh = this.GameObject.AddComponent<ProBuilderMesh>();
+                mesh = GameObject.AddComponent<ProBuilderMesh>();
             }
 
-            var first = this.BlockInfo.floorPolygon.First();
-            var last = this.BlockInfo.floorPolygon.Last();
+            var first = BlockInfo.floorPolygon.First();
+            var last = BlockInfo.floorPolygon.Last();
             if (first.x == last.x && first.y == last.y && first.z == last.z)
             {
-                this.BlockInfo.floorPolygon.Remove(this.BlockInfo.floorPolygon.Last());
+                var success = BlockInfo.floorPolygon.Remove(BlockInfo.floorPolygon.Last());
+                if (!success)
+                {
+                    throw new System.Exception("Could not remove duplicate point");
+                }
             }
 
-            mesh.CreateShapeFromPolygon(this.BlockInfo.floorPolygon, this.BlockInfo.height, false);
+            var result = mesh.CreateShapeFromPolygon(BlockInfo.floorPolygon, BlockInfo.height, false);
 
-            this.pb = GameObject.GetComponent<ProBuilderMesh>();
-            if (this.pb.faceCount > 2)
+            if (result != ActionResult.Success)
             {
-                this.pb.SetMaterial(this.pb.faces, this.BlockInfo.sideMaterial);
-                this.pb.SetMaterial(new List<Face>() { this.pb.faces[0] }, this.BlockInfo.topMaterial);
-                this.pb.SetMaterial(new List<Face>() { this.pb.faces[1] }, this.BlockInfo.bottomMaterial);
+                throw new System.Exception("could not create mesh");
+            }
+
+            pb = GameObject.GetComponent<ProBuilderMesh>();
+            if (pb.faceCount > 2)
+            {
+                pb.SetMaterial(pb.faces, BlockInfo.sideMaterial);
+                pb.SetMaterial(new List<Face>() { pb.faces[0] }, BlockInfo.topMaterial);
+                pb.SetMaterial(new List<Face>() { pb.faces[1] }, BlockInfo.bottomMaterial);
             }
 
             var i = 0;
-            foreach (var face in this.pb.faces)
+            foreach (var face in pb.faces)
             {
                 // Skip the bottom and ceiling face:
                 if (i > 1)
                 {
-                    face.uv = this.BlockInfo.sideUvUnwrapSettings;
+                    face.uv = BlockInfo.sideUvUnwrapSettings;
                 }
                 i++;
             }
-            this.pb.ToMesh();
-            this.pb.Refresh();
+            pb.ToMesh();
+            pb.Refresh();
 
-            this.FindSpecialSides();
+            FindSpecialSides();
 
-            this.LeanForward();
+            LeanForward();
 
-            if (this.BlockInfo.pointedRoof)
+            if (BlockInfo.pointedRoof)
             {
-                this.AddPointedRoof();
+                AddPointedRoof();
             }
         }
 
         public void FindSpecialSides()
         {
-            if (this.pb.faces.Count < 5)
+            if (pb.faces.Count < 5)
             {
                 return;
             }
 
-            this.topFace = this.pb.faces[0];
-            var topWingedEdges = WingedEdge.GetWingedEdges(this.pb, new Face[] { this.topFace }, false);
+            topFace = pb.faces[0];
+            var topWingedEdges = WingedEdge.GetWingedEdges(pb, new Face[] { topFace }, false);
 
             // For now, this only works on blocks with a building with 4 sides.
-            if (this.topFace.edges.Count != 4)
+            if (topFace.edges.Count != 4)
             {
                 return;
             }
 
-            this.fourSides = true;
+            fourSides = true;
             float shortestDistance = 0f;
 
             // find shortest side:
             foreach (var wingedEdge in topWingedEdges)
             {
-                var vertices = this.pb.GetVertices(new List<int>() { wingedEdge.edge.local.a, wingedEdge.edge.local.b });
+                var vertices = pb.GetVertices(new List<int>() { wingedEdge.edge.local.a, wingedEdge.edge.local.b });
                 var edgeLength = Vector3.Distance(vertices[0].position, vertices[1].position);
                 if (shortestDistance == 0 || edgeLength < shortestDistance)
                 {
                     shortestDistance = edgeLength;
-                    this.topFaceShortestEdge = wingedEdge.edge.local;
-                    this.topFaceShortestEdgeCommon = wingedEdge.edge.common;
+                    topFaceShortestEdge = wingedEdge.edge.local;
+                    topFaceShortestEdgeCommon = wingedEdge.edge.common;
                 }
             }
 
@@ -112,31 +121,31 @@ namespace GeoJsonCityBuilder.Editor
             {
                 var edge = wingedEdge.edge.local;
 
-                if (edge.a != this.topFaceShortestEdge.a && edge.a != this.topFaceShortestEdge.b && edge.b != this.topFaceShortestEdge.a && edge.b != this.topFaceShortestEdge.b)
+                if (edge.a != topFaceShortestEdge.a && edge.a != topFaceShortestEdge.b && edge.b != topFaceShortestEdge.a && edge.b != topFaceShortestEdge.b)
                 {
-                    this.topFaceOppositeEdge = edge;
-                    this.topFaceOppositeEdgeCommon = wingedEdge.edge.common;
+                    topFaceOppositeEdge = edge;
+                    topFaceOppositeEdgeCommon = wingedEdge.edge.common;
                     break;
                 }
             }
 
-            var wingedEdges = WingedEdge.GetWingedEdges(this.pb, this.pb.faces, false);
+            var wingedEdges = WingedEdge.GetWingedEdges(pb, pb.faces, false);
             foreach (var wingedEdge in wingedEdges)
             {
-                if (wingedEdge.edge.common == this.topFaceShortestEdgeCommon && wingedEdge.face != this.topFace)
+                if (wingedEdge.edge.common == topFaceShortestEdgeCommon && wingedEdge.face != topFace)
                 {
-                    this.frontFaceTopEdge = wingedEdge.edge.local;
+                    frontFaceTopEdge = wingedEdge.edge.local;
                 }
-                if (wingedEdge.edge.common == this.topFaceOppositeEdgeCommon && wingedEdge.face != this.topFace)
+                if (wingedEdge.edge.common == topFaceOppositeEdgeCommon && wingedEdge.face != topFace)
                 {
-                    this.backFaceTopEdge = wingedEdge.edge.local;
+                    backFaceTopEdge = wingedEdge.edge.local;
                 }
             }
         }
 
         public void AddPointedRoof()
         {
-            if (!this.fourSides)
+            if (!fourSides)
             {
                 return;
             }
@@ -144,23 +153,23 @@ namespace GeoJsonCityBuilder.Editor
             try
             {
                 // Optionally, pull up back and front facades:
-                if (this.BlockInfo.raiseFrontAndBackFacadeTop)
+                if (BlockInfo.raiseFrontAndBackFacadeTop)
                 {
-                    VertexEditing.SplitVertices(this.pb, this.frontFaceTopEdge);
-                    VertexEditing.SplitVertices(this.pb, this.backFaceTopEdge);
-                    pb.TranslateVertices(new Edge[] { this.frontFaceTopEdge, this.backFaceTopEdge }, new Vector3(0f, this.BlockInfo.pointedRoofHeight, 0f));
+                    VertexEditing.SplitVertices(pb, frontFaceTopEdge);
+                    VertexEditing.SplitVertices(pb, backFaceTopEdge);
+                    pb.TranslateVertices(new Edge[] { frontFaceTopEdge, backFaceTopEdge }, new Vector3(0f, BlockInfo.pointedRoofHeight, 0f));
                 }
 
                 // Draw new top-ridge as edge connecting center shortest side and its opposite side
-                var connectResult = this.pb.Connect(new Edge[] { this.topFaceShortestEdge, this.topFaceOppositeEdge });
+                var connectResult = pb.Connect(new Edge[] { topFaceShortestEdge, topFaceOppositeEdge });
                 var newEdge = connectResult.item2[0];
 
                 // Pull this new edge up:
-                var extrudedEdges = this.pb.Extrude(new Edge[] { newEdge }, 0f, false, true);
-                this.pb.TranslateVertices(connectResult.item2, new Vector3(0f, this.BlockInfo.pointedRoofHeight, 0f));
+                var extrudedEdges = pb.Extrude(new Edge[] { newEdge }, 0f, false, true);
+                pb.TranslateVertices(connectResult.item2, new Vector3(0f, BlockInfo.pointedRoofHeight, 0f));
 
-                this.pb.ToMesh();
-                this.pb.Refresh();
+                pb.ToMesh();
+                pb.Refresh();
             }
             catch (System.Exception)
             {
@@ -171,22 +180,22 @@ namespace GeoJsonCityBuilder.Editor
         public void LeanForward()
         {
 
-            if (!this.fourSides | this.BlockInfo.leanForward == 0)
+            if (!fourSides | BlockInfo.leanForward == 0)
             {
                 return;
             }
 
-            this.LeanForwardFromTopEdge(this.topFaceShortestEdgeCommon);
-            this.LeanForwardFromTopEdge(this.topFaceOppositeEdgeCommon);
+            LeanForwardFromTopEdge(topFaceShortestEdgeCommon);
+            LeanForwardFromTopEdge(topFaceOppositeEdgeCommon);
         }
 
         public void LeanForwardFromTopEdge(Edge edge)
         {
-            var edgePoints = this.pb.GetVertices(new List<int>() { edge.a, edge.b });
+            var edgePoints = pb.GetVertices(new List<int>() { edge.a, edge.b });
             var vector = edgePoints[1].position - edgePoints[0].position;
-            var transform = new Vector3(vector.z * this.BlockInfo.leanForward / vector.magnitude, 0, vector.x * this.BlockInfo.leanForward / vector.magnitude);
+            var transform = new Vector3(vector.z * BlockInfo.leanForward / vector.magnitude, 0, vector.x * BlockInfo.leanForward / vector.magnitude);
 
-            pb.TranslateVertices(new List<Edge>() { this.topFaceShortestEdge }, transform);
+            pb.TranslateVertices(new List<Edge>() { topFaceShortestEdge }, transform);
             pb.ToMesh();
             pb.Refresh();
         }

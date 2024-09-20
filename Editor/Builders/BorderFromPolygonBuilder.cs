@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GeoJsonCityBuilder.Components;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 using UnityEngine.ProBuilder.MeshOperations;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Builders
 {
     public class BorderFromPolygonBuilder
     {
@@ -17,16 +18,16 @@ namespace GeoJsonCityBuilder.Editor
 
         public BorderFromPolygonBuilder(BorderFromPolygon borderInfo)
         {
-            this.BorderInfo = borderInfo;
-            this.GameObject = borderInfo.gameObject;
+            BorderInfo = borderInfo;
+            GameObject = borderInfo.gameObject;
         }
 
         public void Draw()
         {
-            this.RemoveAllChildren();
-            this.PopulateCornerList();
+            RemoveAllChildren();
+            PopulateCornerList();
 
-            var angles = 
+            var angles =
                 from corner in corners
                 select Vector3.SignedAngle(corner.current - corner.previous, corner.next - corner.current, Vector3.up);
 
@@ -34,11 +35,11 @@ namespace GeoJsonCityBuilder.Editor
 
             var outerPolygon =
                 (from innerCorner in corners
-                select this.FindOuterPoint(innerCorner, BorderInfo.outerExtension, clockwise)).ToList();
+                 select FindOuterPoint(innerCorner, BorderInfo.outerExtension, clockwise)).ToList();
 
             var innerPolygon =
                 (from innerCorner in corners
-                select this.FindOuterPoint(innerCorner, BorderInfo.innerExtension, !clockwise)).ToList();
+                 select FindOuterPoint(innerCorner, BorderInfo.innerExtension, !clockwise)).ToList();
 
             for (int i = 0; i < n; i++)
             {
@@ -51,16 +52,16 @@ namespace GeoJsonCityBuilder.Editor
                     innerPolygon[i_next]
                 };
 
-                this.DrawSegment(segmentFloorPolygon);
+                DrawSegment(segmentFloorPolygon);
             }
         }
 
         private void PopulateCornerList()
         {
-           var basePolygon = this.BorderInfo.floorPolygon;
+            var basePolygon = BorderInfo.floorPolygon;
 
-            this.n = basePolygon.Count;
-            this.corners = new List<LinkedCorner>();
+            n = basePolygon.Count;
+            corners = new List<LinkedCorner>();
 
             for (int i = 0; i < n; i++)
             {
@@ -76,16 +77,20 @@ namespace GeoJsonCityBuilder.Editor
         private void DrawSegment(List<Vector3> floorPolygon)
         {
             var segmentGo = new GameObject("Segment");
-            segmentGo.transform.parent = this.GameObject.transform;
+            segmentGo.transform.parent = GameObject.transform;
 
             var mesh = segmentGo.AddComponent<ProBuilderMesh>();
-            mesh.CreateShapeFromPolygon(floorPolygon, this.BorderInfo.height, false);
+            var result = mesh.CreateShapeFromPolygon(floorPolygon, BorderInfo.height, false);
+            if (result != ActionResult.Success)
+            {
+                throw new Exception("Creation of mesh failed.");
+            }
 
-            mesh.SetMaterial(mesh.faces, this.BorderInfo.material);
+            mesh.SetMaterial(mesh.faces, BorderInfo.material);
 
             foreach (var face in mesh.faces)
             {
-                face.uv = this.BorderInfo.sideUvUnwrapSettings;
+                face.uv = BorderInfo.sideUvUnwrapSettings;
             }
 
             mesh.ToMesh();
@@ -118,7 +123,7 @@ namespace GeoJsonCityBuilder.Editor
 
             var projectedInnerOnOuterPreviousLine = current + toPreviousOuterLine;
             var projectedInnerOnOuterNextLine = current + toNextOuterLine;
-            
+
             try
             {
                 return LineLineIntersection(projectedInnerOnOuterPreviousLine, previousVector, projectedInnerOnOuterNextLine, nextVector);
@@ -159,18 +164,18 @@ namespace GeoJsonCityBuilder.Editor
 
         public void RemoveAllChildren()
         {
-            if (Application.IsPlaying(this.GameObject))
+            if (Application.IsPlaying(GameObject))
             {
-                foreach (Transform child in this.GameObject.transform)
+                foreach (Transform child in GameObject.transform)
                 {
                     GameObject.Destroy(child.gameObject);
                 }
             }
             else
             {
-                while (this.GameObject.transform.childCount > 0)
+                while (GameObject.transform.childCount > 0)
                 {
-                    GameObject.DestroyImmediate(this.GameObject.transform.GetChild(0).gameObject);
+                    GameObject.DestroyImmediate(GameObject.transform.GetChild(0).gameObject);
                 }
             }
         }

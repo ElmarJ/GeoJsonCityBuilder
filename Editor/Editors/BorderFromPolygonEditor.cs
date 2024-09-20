@@ -1,23 +1,25 @@
 //C# Example (LookAtPointEditor.cs)
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
+using GeoJsonCityBuilder.Components;
+using GeoJsonCityBuilder.Editor.Builders;
+using UnityEditor;
+using UnityEngine;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
 
     [CustomEditor(typeof(BorderFromPolygon))]
     [CanEditMultipleObjects]
     public class BorderFromPolygonEditor : UnityEditor.Editor
     {
-        SerializedProperty floorPolygon;
-        SerializedProperty material;
-        SerializedProperty height;
-        SerializedProperty outerExtension;
-        SerializedProperty innerExtension;
-        SerializedProperty sideUvUnwrapSettings;
+        private SerializedProperty floorPolygon;
+        private SerializedProperty material;
+        private SerializedProperty height;
+        private SerializedProperty outerExtension;
+        private SerializedProperty innerExtension;
+        private SerializedProperty sideUvUnwrapSettings;
 
-        void OnEnable()
+        private void OnEnable()
         {
             floorPolygon = serializedObject.FindProperty("floorPolygon");
             material = serializedObject.FindProperty("material");
@@ -29,7 +31,7 @@ namespace GeoJsonCityBuilder.Editor
 
         public override void OnInspectorGUI()
         {
-            var controller = this.serializedObject.targetObject as BorderFromPolygon;
+            var controller = serializedObject.targetObject as BorderFromPolygon;
 
             serializedObject.Update();
 
@@ -45,7 +47,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Set Test Floor"))
             {
-                this.CreateTestFloor();
+                CreateTestFloor();
             }
             if (GUILayout.Button("Draw"))
             {
@@ -58,13 +60,13 @@ namespace GeoJsonCityBuilder.Editor
 
         private void CreateTestFloor()
         {
-            var controller = this.target as BlockFromPolygon;
+            var controller = target as BlockFromPolygon;
 
             controller.floorPolygon = new List<Vector3>() {
-                new Vector3( 5f, 0f, 10f),
-                new Vector3(-5f, 0f, 10f),
-                new Vector3(-5f, 0f,-10f),
-                new Vector3( 5f, 0f,-10f)
+                new( 5f, 0f, 10f),
+                new(-5f, 0f, 10f),
+                new(-5f, 0f,-10f),
+                new( 5f, 0f,-10f)
             };
         }
     }

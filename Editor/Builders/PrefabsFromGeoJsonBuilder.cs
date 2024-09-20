@@ -1,14 +1,14 @@
-using System.Collections.Generic;
-
-using System.Linq;
+using GeoJSON.Net.Feature;
 using GeoJSON.Net.Geometry;
+using GeoJsonCityBuilder.Components;
+using GeoJsonCityBuilder.Editor.Helpers;
 using Newtonsoft.Json;
-using GeoJsonCityBuilder.Data;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using GeoJSON.Net.Feature;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Builders
 {
     public class PrefabsFromGeoJsonBuilder
     {
@@ -18,58 +18,58 @@ namespace GeoJsonCityBuilder.Editor
             private set;
         }
 
-        List<Feature> m_features;
+        private List<Feature> m_features;
 
         public PrefabsFromGeoJsonBuilder(PrefabsFromGeoJson component)
         {
-            this.Component = component;
+            Component = component;
         }
 
         private void DeserializeGeoJson()
         {
-            var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(this.Component.geoJsonFile.text);
+            var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(Component.geoJsonFile.text);
             var filteredFeatures =
                 from feature in geoJSON.Features
-                where feature.Geometry.Type == GeoJSON.Net.GeoJSONObjectType.Point && (this.Component.featureTypeFilter == "" || (feature.Properties.ContainsKey("type")
+                where feature.Geometry.Type == GeoJSON.Net.GeoJSONObjectType.Point && (Component.featureTypeFilter == "" || (feature.Properties.ContainsKey("type")
                                                                  && feature.Properties["type"] != null
-                                                                 && feature.Properties["type"].ToString() == this.Component.featureTypeFilter))
+                                                                 && feature.Properties["type"].ToString() == Component.featureTypeFilter))
                 select feature as Feature;
-            this.m_features = filteredFeatures.ToList();
+            m_features = filteredFeatures.ToList();
         }
 
         public void RemoveAllChildren()
         {
-            if (Application.IsPlaying(this.Component.gameObject))
+            if (Application.IsPlaying(Component.gameObject))
             {
-                foreach (Transform child in this.Component.transform)
+                foreach (Transform child in Component.transform)
                 {
                     GameObject.Destroy(child.gameObject);
                 }
             }
             else
             {
-                while (this.Component.transform.childCount > 0)
+                while (Component.transform.childCount > 0)
                 {
-                    GameObject.DestroyImmediate(this.Component.transform.GetChild(0).gameObject);
+                    GameObject.DestroyImmediate(Component.transform.GetChild(0).gameObject);
                 }
             }
         }
 
         public void Rebuild(int seed = 42)
         {
-            this.RemoveAllChildren();
-            this.DeserializeGeoJson();
+            RemoveAllChildren();
+            DeserializeGeoJson();
 
             Random.InitState(seed);
 
-            foreach (Feature feature in this.m_features)
+            foreach (Feature feature in m_features)
             {
                 var point = feature.Geometry as Point;
-                var go = Object.Instantiate(this.Component.prefab, this.Component.transform);
+                var go = Object.Instantiate(Component.prefab, Component.transform);
 
                 // Todo: solve this, we shouldn't assign to positionComponent.
-                var worldOrigin = this.Component.worldPosition.SceneOrigin;
-                
+                var worldOrigin = Component.worldPosition.SceneOrigin;
+
                 var position = point.Coordinates.ToCoordinate().ToLocalPosition(worldOrigin, go.transform.position.y);
                 go.transform.localPosition = position;
                 go.transform.Rotate(0f, Random.Range(0f, 360f), 0, Space.Self);
@@ -85,8 +85,8 @@ namespace GeoJsonCityBuilder.Editor
                 }
 
                 var existenceController = go.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ContainsKey(this.Component.timeStartYearField) && feature.Properties[this.Component.timeStartYearField] != null ? (long)feature.Properties[this.Component.timeStartYearField] : -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ContainsKey(this.Component.timeEndYearField) && feature.Properties[this.Component.timeEndYearField] != null ? (long)feature.Properties[this.Component.timeEndYearField] : 9999;
+                existenceController.existencePeriodStart = feature.Properties.ContainsKey(Component.timeStartYearField) && feature.Properties[Component.timeStartYearField] != null ? (long)feature.Properties[Component.timeStartYearField] : -9999;
+                existenceController.existencePeriodEnd = feature.Properties.ContainsKey(Component.timeEndYearField) && feature.Properties[Component.timeEndYearField] != null ? (long)feature.Properties[Component.timeEndYearField] : 9999;
             }
         }
     }

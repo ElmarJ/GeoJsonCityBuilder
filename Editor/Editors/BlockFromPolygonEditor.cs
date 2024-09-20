@@ -1,28 +1,29 @@
 //C# Example (LookAtPointEditor.cs)
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+using GeoJsonCityBuilder.Editor.Builders;
+using GeoJsonCityBuilder.Components;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Editors
 {
 
     [CustomEditor(typeof(BlockFromPolygon))]
     [CanEditMultipleObjects]
     public class BlockFromPolygonEditor : UnityEditor.Editor
     {
-        SerializedProperty topMaterial;
-        SerializedProperty bottomMaterial;
-        SerializedProperty sideMaterial;
-        SerializedProperty height;
-        SerializedProperty sideUvUnwrapSettings;
-        SerializedProperty pointedRoof;
-        SerializedProperty pointedRoofHeight;
-        SerializedProperty leanForward;
-        SerializedProperty raiseFrontAndBackFacadeTop;
+        private SerializedProperty topMaterial;
+        private SerializedProperty bottomMaterial;
+        private SerializedProperty sideMaterial;
+        private SerializedProperty height;
+        private SerializedProperty sideUvUnwrapSettings;
+        private SerializedProperty pointedRoof;
+        private SerializedProperty pointedRoofHeight;
+        private SerializedProperty leanForward;
+        private SerializedProperty raiseFrontAndBackFacadeTop;
+        private bool showFloorPolygon = false;
 
-        bool showFloorPolygon = false;
-
-        void OnEnable()
+        private void OnEnable()
         {
             topMaterial = serializedObject.FindProperty("topMaterial");
             bottomMaterial = serializedObject.FindProperty("bottomMaterial");
@@ -37,7 +38,7 @@ namespace GeoJsonCityBuilder.Editor
 
         public override void OnInspectorGUI()
         {
-            var controller = this.serializedObject.targetObject as BlockFromPolygon;
+            var controller = serializedObject.targetObject as BlockFromPolygon;
 
             serializedObject.Update();
 
@@ -55,7 +56,7 @@ namespace GeoJsonCityBuilder.Editor
             if (controller.floorPolygon != null)
             {
                 showFloorPolygon = EditorGUILayout.BeginFoldoutHeaderGroup(showFloorPolygon, "Polygon");
-                if(showFloorPolygon)
+                if (showFloorPolygon)
                 {
                     foreach (var coordinate in controller.floorPolygon)
                     {
@@ -69,7 +70,7 @@ namespace GeoJsonCityBuilder.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Set Test Floor"))
             {
-                this.CreateTestFloor();
+                CreateTestFloor();
             }
             if (GUILayout.Button("Draw"))
             {
@@ -82,13 +83,13 @@ namespace GeoJsonCityBuilder.Editor
 
         private void CreateTestFloor()
         {
-            var controller = this.target as BlockFromPolygon;
+            var controller = target as BlockFromPolygon;
 
             controller.floorPolygon = new List<Vector3>() {
-                new Vector3( 5f, 0f, 10f),
-                new Vector3(-5f, 0f, 10f),
-                new Vector3(-5f, 0f,-10f),
-                new Vector3( 5f, 0f,-10f)
+                new( 5f, 0f, 10f),
+                new(-5f, 0f, 10f),
+                new(-5f, 0f,-10f),
+                new( 5f, 0f,-10f)
             };
         }
     }

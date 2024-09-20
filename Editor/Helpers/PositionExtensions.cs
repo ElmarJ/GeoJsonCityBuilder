@@ -1,7 +1,7 @@
 using GeoJSON.Net.Geometry;
 using GeoJsonCityBuilder.Data;
 
-namespace GeoJsonCityBuilder.Editor
+namespace GeoJsonCityBuilder.Editor.Helpers
 {
     public static class PositionExtensions
     {
