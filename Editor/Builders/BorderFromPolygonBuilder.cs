@@ -81,9 +81,9 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
             var mesh = segmentGo.AddComponent<ProBuilderMesh>();
             var result = mesh.CreateShapeFromPolygon(floorPolygon, BorderInfo.height, false);
-            if (result != ActionResult.Success)
+            if (result.status != ActionResult.Status.Success)
             {
-                throw new Exception("Creation of mesh failed.");
+                Debug.LogError($"Could not create mesh for [{this.BorderInfo.name}]: {result.notification}");
             }
 
             mesh.SetMaterial(mesh.faces, BorderInfo.material);

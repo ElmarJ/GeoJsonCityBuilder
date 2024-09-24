@@ -42,15 +42,15 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 var success = BlockInfo.floorPolygon.Remove(BlockInfo.floorPolygon.Last());
                 if (!success)
                 {
-                    throw new System.Exception("Could not remove duplicate point");
+                    Debug.LogError($"Could not remove duplicate point on [{this.BlockInfo.name}]");
                 }
             }
 
             var result = mesh.CreateShapeFromPolygon(BlockInfo.floorPolygon, BlockInfo.height, false);
 
-            if (result != ActionResult.Success)
+            if (result.status != ActionResult.Status.Success)
             {
-                throw new System.Exception("could not create mesh");
+                Debug.LogError($"Could not create mesh for [{this.BlockInfo.name}]: {result.notification}");
             }
 
             pb = GameObject.GetComponent<ProBuilderMesh>();
