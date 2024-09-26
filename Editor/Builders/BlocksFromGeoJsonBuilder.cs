@@ -4,8 +4,10 @@ using GeoJSON.Net.Geometry;
 using GeoJsonCityBuilder.Components;
 using GeoJsonCityBuilder.Editor.Helpers;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace GeoJsonCityBuilder.Editor.Builders
@@ -82,7 +84,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
             {
                 var geometry = feature.Geometry as Polygon;
 
-                var block = Component.basePrefab ? GameObject.Instantiate(Component.basePrefab) : new GameObject();
+                var block = Component.basePrefab ? (GameObject)PrefabUtility.InstantiatePrefab(Component.basePrefab) : new GameObject();
                 block.name = Component.featureTypeFilter + i++.ToString();
                 block.transform.parent = Component.transform;
                 block.transform.position = Component.transform.position;
@@ -96,7 +98,6 @@ namespace GeoJsonCityBuilder.Editor.Builders
                         featureComponent.Properties[property.Key] = property.Value;
                     }
                 }
-
 
                 var existenceController = block.AddComponent<ExistenceController>();
                 existenceController.existencePeriodStart = feature.Properties.ContainsKey(Component.timeStartYearField) && feature.Properties[Component.timeStartYearField] != null ? (long)feature.Properties[Component.timeStartYearField] : -9999;

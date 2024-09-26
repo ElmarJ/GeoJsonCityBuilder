@@ -65,7 +65,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
             foreach (Feature feature in m_features)
             {
                 var point = feature.Geometry as Point;
-                var go = Object.Instantiate(Component.prefab, Component.transform);
+                var go = (GameObject)PrefabUtility.InstantiatePrefab(Component.prefab, Component.transform);
 
                 // Todo: solve this, we shouldn't assign to positionComponent.
                 var worldOrigin = Component.worldPosition.SceneOrigin;
