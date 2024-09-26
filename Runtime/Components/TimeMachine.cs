@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace GeoJsonCityBuilder.Components
 {
@@ -6,7 +7,13 @@ namespace GeoJsonCityBuilder.Components
     public class TimeMachine : MonoBehaviour
     {
         public int year;
+        public UnityEvent YearUpdated;
         private int lastYear;
+
+        private void Start()
+        {
+            YearUpdated ??= new UnityEvent();
+        }
 
         private void Update()
         {
@@ -20,6 +27,8 @@ namespace GeoJsonCityBuilder.Components
                 else
                     ((Component)existenceController).gameObject.SetActive(false);
             }
+
+            YearUpdated?.Invoke();
         }
     }
 }
