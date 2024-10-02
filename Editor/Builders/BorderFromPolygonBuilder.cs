@@ -83,7 +83,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
             var result = mesh.CreateShapeFromPolygon(floorPolygon, BorderInfo.height, false);
             if (result.status != ActionResult.Status.Success)
             {
-                Debug.LogError($"Could not create mesh for [{this.BorderInfo.name}] [{name}]: {result.notification}");
+                Debug.LogWarning($"Could not create mesh for [{this.BorderInfo.name}] [{name}]: {result.notification}");
             }
 
             mesh.SetMaterial(mesh.faces, BorderInfo.material);

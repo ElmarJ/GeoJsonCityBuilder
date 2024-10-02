@@ -42,7 +42,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 var success = BlockInfo.floorPolygon.Remove(BlockInfo.floorPolygon.Last());
                 if (!success)
                 {
-                    Debug.LogError($"Could not remove duplicate point on [{this.BlockInfo.name}]");
+                    Debug.LogWarning($"Could not remove duplicate point on [{this.BlockInfo.name}]");
                 }
             }
 
@@ -50,7 +50,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
             if (result.status != ActionResult.Status.Success)
             {
-                Debug.LogError($"Could not create mesh for [{this.BlockInfo.name}]: {result.notification}");
+                Debug.LogWarning($"Could not create mesh for [{this.BlockInfo.name}]: {result.notification}");
             }
 
             pb = GameObject.GetComponent<ProBuilderMesh>();
@@ -171,9 +171,9 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 pb.ToMesh();
                 pb.Refresh();
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-
+                Debug.LogException(ex);
             }
         }
 
