@@ -52,7 +52,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
                     innerPolygon[i_next]
                 };
 
-                DrawSegment(segmentFloorPolygon);
+                DrawSegment(segmentFloorPolygon, $"Segment {i + 1}");
             }
         }
 
@@ -74,16 +74,16 @@ namespace GeoJsonCityBuilder.Editor.Builders
             }
         }
 
-        private void DrawSegment(List<Vector3> floorPolygon)
+        private void DrawSegment(List<Vector3> floorPolygon, string name)
         {
-            var segmentGo = new GameObject("Segment");
+            var segmentGo = new GameObject(name ?? "");
             segmentGo.transform.parent = GameObject.transform;
 
             var mesh = segmentGo.AddComponent<ProBuilderMesh>();
             var result = mesh.CreateShapeFromPolygon(floorPolygon, BorderInfo.height, false);
             if (result.status != ActionResult.Status.Success)
             {
-                Debug.LogError($"Could not create mesh for [{this.BorderInfo.name}]: {result.notification}");
+                Debug.LogError($"Could not create mesh for [{this.BorderInfo.name}] [{name}]: {result.notification}");
             }
 
             mesh.SetMaterial(mesh.faces, BorderInfo.material);
