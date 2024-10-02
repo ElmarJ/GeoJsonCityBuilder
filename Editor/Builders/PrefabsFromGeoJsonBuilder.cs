@@ -31,9 +31,8 @@ namespace GeoJsonCityBuilder.Editor.Builders
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(Component.geoJsonFile.text);
             var filteredFeatures =
                 from feature in geoJSON.Features
-                where feature.Geometry.Type == GeoJSON.Net.GeoJSONObjectType.Point && (Component.featureTypeFilter == "" || (feature.Properties.ContainsKey("type")
-                                                                 && feature.Properties["type"] != null
-                                                                 && feature.Properties["type"].ToString() == Component.featureTypeFilter))
+                where feature.Geometry.Type == GeoJSON.Net.GeoJSONObjectType.Point && 
+                    (Component.excludeProperty is null or "" || !feature.Properties.ContainsKey(Component.excludeProperty) || !(bool)feature.Properties[Component.excludeProperty])
                 select feature as Feature;
             m_features = filteredFeatures.ToList();
         }

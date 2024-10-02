@@ -7,7 +7,7 @@ namespace GeoJsonCityBuilder.Components
     {
         public TextAsset geoJsonFile;
         public WorldPositionAnchor worldPosition;
-        public string featureTypeFilter;
+        public string excludeProperty;
         public GameObject prefab;
         public string timeStartYearField;
         public string timeEndYearField;

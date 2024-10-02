@@ -8,6 +8,7 @@ namespace GeoJsonCityBuilder.Components
     {
         public WorldPositionAnchor worldPositionAnchor;
         public TextAsset geoJsonFile;
+        public string excludeProperty;
         public float height;
         public float outerExtension;
         public float innerExtension;

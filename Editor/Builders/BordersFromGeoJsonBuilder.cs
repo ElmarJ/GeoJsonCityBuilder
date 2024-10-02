@@ -27,7 +27,8 @@ namespace GeoJsonCityBuilder.Editor.Builders
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(Component.geoJsonFile.text);
             var features =
                 from feature in geoJSON.Features
-                where feature.Geometry.Type == GeoJSONObjectType.Polygon
+                where feature.Geometry.Type == GeoJSONObjectType.Polygon && 
+                    (Component.excludeProperty is null or "" || !feature.Properties.ContainsKey(Component.excludeProperty) || !(bool)feature.Properties[Component.excludeProperty])
                 select feature;
 
             m_features = features.ToList();

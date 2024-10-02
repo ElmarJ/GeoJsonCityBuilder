@@ -10,7 +10,7 @@ namespace GeoJsonCityBuilder.Components
         public WorldPositionAnchor worldPositionAnchor;
         public TextAsset geoJsonFile;
         public GameObject basePrefab;
-        public string featureTypeFilter;
+        public string excludeProperty;
         public float heightMin;
         public float heightMax;
         public Material topMaterial;

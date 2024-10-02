@@ -37,7 +37,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
             var filteredFeatures =
                 from feature in geoJSON.Features
                 where feature.Geometry.Type == GeoJSONObjectType.Polygon
-                    && (Component.featureTypeFilter is null or "" || feature.Properties["type"].ToString() == Component.featureTypeFilter)
+                    && (Component.excludeProperty is null or "" || !feature.Properties.ContainsKey(Component.excludeProperty) || !(bool)feature.Properties[Component.excludeProperty])
                 select feature;
 
             m_features = filteredFeatures.ToList();
@@ -82,7 +82,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 var geometry = feature.Geometry as Polygon;
 
                 var block = Component.basePrefab ? (GameObject)PrefabUtility.InstantiatePrefab(Component.basePrefab) : new GameObject();
-                block.name = Component.featureTypeFilter + i++.ToString();
+                block.name = $"Block {i++}";
                 block.transform.parent = Component.transform;
                 block.transform.position = Component.transform.position;
 
