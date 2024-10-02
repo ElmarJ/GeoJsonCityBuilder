@@ -3,6 +3,7 @@ using GeoJSON.Net.Geometry;
 using GeoJsonCityBuilder.Components;
 using GeoJsonCityBuilder.Editor.Helpers;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -60,7 +61,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
             RemoveAllChildren();
             DeserializeGeoJson();
 
-            Random.InitState(seed);
+            UnityEngine.Random.InitState(seed);
 
             foreach (Feature feature in m_features)
             {
@@ -72,7 +73,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
                 var position = point.Coordinates.ToCoordinate().ToLocalPosition(worldOrigin, go.transform.position.y);
                 go.transform.localPosition = position;
-                go.transform.Rotate(0f, Random.Range(0f, 360f), 0, Space.Self);
+                go.transform.Rotate(0f, UnityEngine.Random.Range(0f, 360f), 0, Space.Self);
 
                 var featureComponent = go.AddComponent<GeoJsonFeatureInstance>();
                 featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
@@ -85,9 +86,23 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 }
 
                 var existenceController = go.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ContainsKey(Component.timeStartYearField) && feature.Properties[Component.timeStartYearField] != null ? (long)feature.Properties[Component.timeStartYearField] : -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ContainsKey(Component.timeEndYearField) && feature.Properties[Component.timeEndYearField] != null ? (long)feature.Properties[Component.timeEndYearField] : 9999;
+                existenceController.existencePeriodStart = GetYearFromField(feature, Component.timeStartYearField) ?? -9999;
+                existenceController.existencePeriodEnd = GetYearFromField(feature, Component.timeEndYearField) ?? 9999;
             }
+        }
+
+        private static int? GetYearFromField(Feature feature, string field)
+        {
+            object value = feature.Properties.ContainsKey(field) ? feature.Properties[field] : null;
+            int? year = value switch
+            {
+                string text => text.Length >= 4 && int.TryParse(text[..4], out int number) ? number : null,
+                long y => (int)y,
+                int y => y,
+                _ => null
+            };
+
+            return year;
         }
     }
 }

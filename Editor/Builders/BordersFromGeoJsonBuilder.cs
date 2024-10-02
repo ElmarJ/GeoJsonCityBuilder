@@ -4,6 +4,7 @@ using GeoJSON.Net.Geometry;
 using GeoJsonCityBuilder.Components;
 using GeoJsonCityBuilder.Editor.Helpers;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -55,7 +56,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
             RemoveAllChildren();
             DeserializeGeoJson();
 
-            Random.InitState(seed);
+            UnityEngine.Random.InitState(seed);
 
             var origin = Component.worldPositionAnchor.SceneOrigin;
 
@@ -71,8 +72,8 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 border.transform.position = Component.transform.position;
 
                 var existenceController = border.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ContainsKey("exist.period.start") && feature.Properties["exist.period.start"] != null ? (long)feature.Properties["exist.period.start"] : -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ContainsKey("exist.period.end") && feature.Properties["exist.period.end"] != null ? (long)feature.Properties["exist.period.end"] : 9999;
+                existenceController.existencePeriodStart = GetYearFromField(feature, Component.timeStartYearField) ?? -9999;
+                existenceController.existencePeriodEnd = GetYearFromField(feature, Component.timeEndYearField) ?? 9999;
 
                 var controller = border.AddComponent<BorderFromPolygon>();
                 controller.height = Component.height;
@@ -86,6 +87,19 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 var borderBuilder = new BorderFromPolygonBuilder(controller);
                 borderBuilder.Draw();
             }
+        }
+        private static int? GetYearFromField(Feature feature, string field)
+        {
+            object value = feature.Properties.ContainsKey(field) ? feature.Properties[field] : null;
+            int? year = value switch
+            {
+                string text => text.Length >= 4 && int.TryParse(text[..4], out int number) ? number : null,
+                long y => (int)y,
+                int y => y,
+                _ => null
+            };
+
+            return year;
         }
     }
 }

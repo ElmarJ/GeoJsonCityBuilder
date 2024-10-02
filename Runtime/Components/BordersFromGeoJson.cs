@@ -13,5 +13,8 @@ namespace GeoJsonCityBuilder.Components
         public float innerExtension;
         public Material material;
         public AutoUnwrapSettings sideUvUnwrapSettings = new();
+        public string timeStartYearField;
+        public string timeEndYearField;
+
     }
 }

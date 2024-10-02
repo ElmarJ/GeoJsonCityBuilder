@@ -4,9 +4,11 @@ using GeoJSON.Net.Geometry;
 using GeoJsonCityBuilder.Components;
 using GeoJsonCityBuilder.Editor.Helpers;
 using Newtonsoft.Json;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,6 +33,8 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 return;
             }
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(Component.geoJsonFile.text);
+            var conv = new GeoJSON.Net.Converters.GeoJsonConverter();
+
             var filteredFeatures =
                 from feature in geoJSON.Features
                 where feature.Geometry.Type == GeoJSONObjectType.Polygon
@@ -100,8 +104,8 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 }
 
                 var existenceController = block.AddComponent<ExistenceController>();
-                existenceController.existencePeriodStart = feature.Properties.ContainsKey(Component.timeStartYearField) && feature.Properties[Component.timeStartYearField] != null ? (long)feature.Properties[Component.timeStartYearField] : -9999;
-                existenceController.existencePeriodEnd = feature.Properties.ContainsKey(Component.timeEndYearField) && feature.Properties[Component.timeEndYearField] != null ? (long)feature.Properties[Component.timeEndYearField] : 9999;
+                existenceController.existencePeriodStart = GetYearFromField(feature, Component.timeStartYearField) ?? -9999;
+                existenceController.existencePeriodEnd = GetYearFromField(feature, Component.timeEndYearField) ?? 9999;
 
                 var controller = block.AddComponent<BlockFromPolygon>();
 
@@ -119,6 +123,20 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 var blockBuilder = new BlockFromPolygonBuilder(controller);
                 blockBuilder.Draw();
             }
+        }
+
+        private static int? GetYearFromField(Feature feature, string field)
+        {
+            object value = feature.Properties.ContainsKey(field) ? feature.Properties[field] : null;
+            int? year = value switch
+            {
+                string text => text.Length >= 4 && int.TryParse(text[..4], out int number) ? number : null,
+                long y => (int)y,
+                int y => y,
+                _ => null
+            };
+
+            return year;
         }
     }
 }

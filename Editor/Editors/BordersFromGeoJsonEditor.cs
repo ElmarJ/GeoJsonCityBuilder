@@ -15,6 +15,8 @@ namespace GeoJsonCityBuilder.Editor.Editors
         private SerializedProperty outerExtension;
         private SerializedProperty innerExtension;
         private SerializedProperty material;
+        private SerializedProperty timeStartYearField;
+        private SerializedProperty timeEndYearField;
         private BordersFromGeoJsonBuilder builder;
 
         private void OnEnable()
@@ -25,6 +27,8 @@ namespace GeoJsonCityBuilder.Editor.Editors
             outerExtension = serializedObject.FindProperty("outerExtension");
             innerExtension = serializedObject.FindProperty("innerExtension");
             material = serializedObject.FindProperty("material");
+            timeStartYearField = serializedObject.FindProperty("timeStartYearField");
+            timeEndYearField = serializedObject.FindProperty("timeEndYearField");
 
             builder = new BordersFromGeoJsonBuilder(TargetObject);
         }
@@ -41,6 +45,9 @@ namespace GeoJsonCityBuilder.Editor.Editors
             EditorGUILayout.PropertyField(outerExtension);
             EditorGUILayout.PropertyField(innerExtension);
             EditorGUILayout.PropertyField(material);
+            EditorGUILayout.Separator();
+            EditorGUILayout.PropertyField(timeStartYearField);
+            EditorGUILayout.PropertyField(timeEndYearField);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear"))
             {
