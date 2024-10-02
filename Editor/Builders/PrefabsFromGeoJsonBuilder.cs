@@ -77,13 +77,6 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
                 var featureComponent = go.AddComponent<GeoJsonFeatureInstance>();
                 featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
-                foreach (var property in feature.Properties)
-                {
-                    if (property.Value != null)
-                    {
-                        featureComponent.Properties[property.Key] = property.Value;
-                    }
-                }
 
                 var existenceController = go.AddComponent<ExistenceController>();
                 existenceController.existencePeriodStart = GetYearFromField(feature, Component.timeStartYearField) ?? -9999;

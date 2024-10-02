@@ -1,7 +1,7 @@
 //C# Example (LookAtPointEditor.cs)
 using GeoJsonCityBuilder.Components;
 using UnityEditor;
-
+using System.Linq;
 
 namespace GeoJsonCityBuilder.Editor.Editors
 {
@@ -21,9 +21,11 @@ namespace GeoJsonCityBuilder.Editor.Editors
                     showCustomFeatures = EditorGUILayout.BeginFoldoutHeaderGroup(showCustomFeatures, "Properties");
                     if (showCustomFeatures)
                     {
-                        foreach (var property in featureComponent.Properties)
+                        foreach (var property in from property in featureComponent.Properties
+                                                 where property.Value != null
+                                                 select property)
                         {
-                            EditorGUILayout.LabelField(string.Format("{0}: {1}", property.Key, property.Value));
+                            EditorGUILayout.LabelField(property.Key, property.Value switch { string s => $"\"{s}\"", null => "", object o => o.ToString() });
                         }
                     }
                     EditorGUILayout.EndFoldoutHeaderGroup();

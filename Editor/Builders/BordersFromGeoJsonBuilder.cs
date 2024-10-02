@@ -71,6 +71,9 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 border.transform.parent = Component.transform;
                 border.transform.position = Component.transform.position;
 
+                var featureComponent = border.AddComponent<GeoJsonFeatureInstance>();
+                featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
+
                 var existenceController = border.AddComponent<ExistenceController>();
                 existenceController.existencePeriodStart = GetYearFromField(feature, Component.timeStartYearField) ?? -9999;
                 existenceController.existencePeriodEnd = GetYearFromField(feature, Component.timeEndYearField) ?? 9999;

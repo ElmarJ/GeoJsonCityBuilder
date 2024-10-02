@@ -33,20 +33,13 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 return;
             }
             var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(Component.geoJsonFile.text);
-            var conv = new GeoJSON.Net.Converters.GeoJsonConverter();
 
             var filteredFeatures =
                 from feature in geoJSON.Features
                 where feature.Geometry.Type == GeoJSONObjectType.Polygon
+                    && (Component.featureTypeFilter is null or "" || feature.Properties["type"].ToString() == Component.featureTypeFilter)
                 select feature;
 
-            if (Component.featureTypeFilter is not null and not "")
-            {
-                filteredFeatures =
-                    from feature in filteredFeatures
-                    where feature.Properties["type"].ToString() == Component.featureTypeFilter
-                    select feature;
-            }
             m_features = filteredFeatures.ToList();
         }
 
@@ -95,13 +88,6 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
                 var featureComponent = block.AddComponent<GeoJsonFeatureInstance>();
                 featureComponent.Properties = new Dictionary<string, object>(feature.Properties);
-                foreach (var property in feature.Properties)
-                {
-                    if (property.Value != null)
-                    {
-                        featureComponent.Properties[property.Key] = property.Value;
-                    }
-                }
 
                 var existenceController = block.AddComponent<ExistenceController>();
                 existenceController.existencePeriodStart = GetYearFromField(feature, Component.timeStartYearField) ?? -9999;
