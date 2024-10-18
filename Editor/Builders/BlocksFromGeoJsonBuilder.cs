@@ -14,59 +14,18 @@ using UnityEngine;
 
 namespace GeoJsonCityBuilder.Editor.Builders
 {
-    public class BlocksFromGeoJsonBuilder
+    public class BlocksFromGeoJsonBuilder: FeatureCollectionBuilderBase<BlocksFromGeoJson>
     {
-        private List<Feature> m_features;
-
-        public BlocksFromGeoJson Component { get; private set; }
-
-        public BlocksFromGeoJsonBuilder(BlocksFromGeoJson blocksFromGeoJsonComponent)
+        public BlocksFromGeoJsonBuilder(BlocksFromGeoJson component) : base(component)
         {
-            Component = blocksFromGeoJsonComponent;
         }
 
         private void DeserializeGeoJson()
         {
-            if (Component.geoJsonFile == null)
-            {
-                Debug.LogError($"GeoJson file not set on {Component.gameObject.name}");
-                return;
-            }
-            var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(Component.geoJsonFile.text);
-
-            var filteredFeatures =
-                from feature in geoJSON.Features
-                where feature.Geometry.Type == GeoJSONObjectType.Polygon
-                    && (Component.excludeProperty is null or "" || !feature.Properties.ContainsKey(Component.excludeProperty) || !(bool)feature.Properties[Component.excludeProperty])
-                select feature;
-
-            m_features = filteredFeatures.ToList();
+            this.DeserializeGeoJson(GeoJSONObjectType.Polygon);
         }
 
-        public void RemoveAllChildren()
-        {
-            if (Application.IsPlaying(Component.gameObject))
-            {
-                foreach (Transform child in Component.transform)
-                {
-                    GameObject.Destroy(child.gameObject);
-                }
-            }
-            else
-            {
-                for (int i = Component.transform.childCount - 1; i >= 0; i--)
-                {
-                    GameObject.DestroyImmediate(Component.transform.GetChild(0).gameObject);
-                }
-
-                if (Component.transform.childCount > 0)
-                {
-                    Debug.LogError("Failed to remove all children");
-                }
-            }
-        }
-
-        public void Rebuild(int seed = 42)
+        public override void Rebuild(int seed = 42)
         {
             RemoveAllChildren();
             DeserializeGeoJson();
@@ -109,20 +68,6 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 var blockBuilder = new BlockFromPolygonBuilder(controller);
                 blockBuilder.Draw();
             }
-        }
-
-        private static int? GetYearFromField(Feature feature, string field)
-        {
-            object value = feature.Properties.ContainsKey(field) ? feature.Properties[field] : null;
-            int? year = value switch
-            {
-                string text => text.Length >= 4 && int.TryParse(text[..4], out int number) ? number : null,
-                long y => (int)y,
-                int y => y,
-                _ => null
-            };
-
-            return year;
         }
     }
 }

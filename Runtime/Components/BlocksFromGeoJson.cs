@@ -5,12 +5,9 @@ using UnityEngine.ProBuilder;
 namespace GeoJsonCityBuilder.Components
 {
     [ExecuteAlways]
-    public class BlocksFromGeoJson : MonoBehaviour
+    public class BlocksFromGeoJson : GeneratorComponentBase
     {
-        public WorldPositionAnchor worldPositionAnchor;
-        public TextAsset geoJsonFile;
         public GameObject basePrefab;
-        public string excludeProperty;
         public float heightMin;
         public float heightMax;
         public Material topMaterial;
@@ -19,7 +16,5 @@ namespace GeoJsonCityBuilder.Components
         public AutoUnwrapSettings sideUvUnwrapSettings = new();
         public bool pointedRoofTops = false;
         public bool raiseFacades = false;
-        public string timeStartYearField;
-        public string timeEndYearField;
     }
 }

@@ -11,48 +11,18 @@ using UnityEngine;
 
 namespace GeoJsonCityBuilder.Editor.Builders
 {
-    public class BordersFromGeoJsonBuilder
+    public class BordersFromGeoJsonBuilder: FeatureCollectionBuilderBase<BordersFromGeoJson>
     {
-        private List<Feature> m_features;
-
-        public BordersFromGeoJson Component { get; private set; }
-
-        public BordersFromGeoJsonBuilder(BordersFromGeoJson bordersFromGeoJsonComponent)
+        public BordersFromGeoJsonBuilder(BordersFromGeoJson component) : base(component)
         {
-            Component = bordersFromGeoJsonComponent;
         }
 
         private void DeserializeGeoJson()
         {
-            var geoJSON = JsonConvert.DeserializeObject<FeatureCollection>(Component.geoJsonFile.text);
-            var features =
-                from feature in geoJSON.Features
-                where feature.Geometry.Type == GeoJSONObjectType.Polygon && 
-                    (Component.excludeProperty is null or "" || !feature.Properties.ContainsKey(Component.excludeProperty) || !(bool)feature.Properties[Component.excludeProperty])
-                select feature;
-
-            m_features = features.ToList();
+            DeserializeGeoJson(GeoJSONObjectType.Polygon);
         }
 
-        public void RemoveAllChildren()
-        {
-            if (Application.IsPlaying(Component.gameObject))
-            {
-                foreach (Transform child in Component.transform)
-                {
-                    GameObject.Destroy(child.gameObject);
-                }
-            }
-            else
-            {
-                while (Component.transform.childCount > 0)
-                {
-                    GameObject.DestroyImmediate(Component.transform.GetChild(0).gameObject);
-                }
-            }
-        }
-
-        public void Rebuild(int seed = 42)
+        public override void Rebuild(int seed = 42)
         {
             RemoveAllChildren();
             DeserializeGeoJson();
@@ -91,19 +61,6 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 var borderBuilder = new BorderFromPolygonBuilder(controller);
                 borderBuilder.Draw();
             }
-        }
-        private static int? GetYearFromField(Feature feature, string field)
-        {
-            object value = feature.Properties.ContainsKey(field) ? feature.Properties[field] : null;
-            int? year = value switch
-            {
-                string text => text.Length >= 4 && int.TryParse(text[..4], out int number) ? number : null,
-                long y => (int)y,
-                int y => y,
-                _ => null
-            };
-
-            return year;
         }
     }
 }
