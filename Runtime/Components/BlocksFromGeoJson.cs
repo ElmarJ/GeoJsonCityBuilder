@@ -8,6 +8,7 @@ namespace GeoJsonCityBuilder.Components
     public class BlocksFromGeoJson : GeneratorComponentBase
     {
         public GameObject basePrefab;
+        public string heightProperty;
         public float heightMin;
         public float heightMax;
         public Material topMaterial;

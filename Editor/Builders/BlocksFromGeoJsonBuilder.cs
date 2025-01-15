@@ -54,7 +54,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
                 var controller = block.AddComponent<BlockFromPolygon>();
 
-                double height = !feature.Properties.ContainsKey("height") || feature.Properties["height"] == null ? 0 : (double)feature.Properties["height"];
+                double height = !feature.Properties.ContainsKey(Component.heightProperty) || feature.Properties[Component.heightProperty] == null ? 0 : (double)feature.Properties[Component.heightProperty];
                 controller.height = height == 0 ? UnityEngine.Random.Range(Component.heightMin, Component.heightMax) : (float)height;
 
                 controller.sideMaterial = Component.sideMaterials[UnityEngine.Random.Range(0, Component.sideMaterials.Count)];
