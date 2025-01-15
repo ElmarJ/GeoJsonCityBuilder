@@ -39,7 +39,9 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
                 var position = point.Coordinates.ToCoordinate().ToLocalPosition(worldOrigin, go.transform.position.y);
                 go.transform.localPosition = position;
-                go.transform.Rotate(0f, UnityEngine.Random.Range(0f, 360f), 0, Space.Self);
+
+                var rotation = !feature.Properties.ContainsKey(Component.rotationProperty) || feature.Properties[Component.rotationProperty] == null ? UnityEngine.Random.Range(0f, 360f) : (float)feature.Properties[Component.rotationProperty];
+                go.transform.Rotate(0f, rotation, 0, Space.Self);
 
                 var featureComponent = go.AddComponent<GeoJsonFeatureInstance>();
                 featureComponent.Properties = new Dictionary<string, object>(feature.Properties);

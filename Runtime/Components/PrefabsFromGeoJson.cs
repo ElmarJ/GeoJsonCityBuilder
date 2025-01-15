@@ -6,6 +6,7 @@ namespace GeoJsonCityBuilder.Components
     public class PrefabsFromGeoJson : GeneratorComponentBase
     {
         public GameObject prefab;
+        public string rotationProperty;
         public WorldPositionAnchor worldPosition;
     }
 }

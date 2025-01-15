@@ -11,8 +11,9 @@ namespace GeoJsonCityBuilder.Editor.Editors
     public class PrefabsFromGeoJsonEditor : UnityEditor.Editor
     {
         private SerializedProperty geoJsonFile;
-        private SerializedProperty excludeProperty;
         private SerializedProperty worldPosition;
+        private SerializedProperty rotationProperty;
+        private SerializedProperty excludeProperty;
         private SerializedProperty prefab;
         private SerializedProperty timeStartYearField;
         private SerializedProperty timeEndYearField;
@@ -21,8 +22,9 @@ namespace GeoJsonCityBuilder.Editor.Editors
         private void OnEnable()
         {
             geoJsonFile = serializedObject.FindProperty("geoJsonFile");
-            excludeProperty = serializedObject.FindProperty("excludeProperty");
             worldPosition = serializedObject.FindProperty("worldPosition");
+            rotationProperty = serializedObject.FindProperty("rotationProperty");
+            excludeProperty = serializedObject.FindProperty("excludeProperty");
             prefab = serializedObject.FindProperty("prefab");
             timeStartYearField = serializedObject.FindProperty("timeStartYearField");
             timeEndYearField = serializedObject.FindProperty("timeEndYearField");
@@ -35,6 +37,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
             serializedObject.Update();
             EditorGUILayout.PropertyField(geoJsonFile);
             EditorGUILayout.PropertyField(worldPosition);
+            EditorGUILayout.PropertyField(rotationProperty);
             EditorGUILayout.PropertyField(excludeProperty);
             EditorGUILayout.PropertyField(prefab);
             EditorGUILayout.Separator();
