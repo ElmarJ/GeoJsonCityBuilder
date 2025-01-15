@@ -15,6 +15,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
         private SerializedProperty worldPositionAnchor;
         private SerializedProperty basePrefab;
         private SerializedProperty excludeProperty;
+        private SerializedProperty heightProperty;
         private SerializedProperty heightMin;
         private SerializedProperty heightMax;
         private SerializedProperty topMaterial;
@@ -33,6 +34,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
             worldPositionAnchor = serializedObject.FindProperty("worldPositionAnchor");
             basePrefab = serializedObject.FindProperty("basePrefab");
             excludeProperty = serializedObject.FindProperty("excludeProperty");
+            heightProperty = serializedObject.FindProperty("heightProperty");
             heightMin = serializedObject.FindProperty("heightMin");
             heightMax = serializedObject.FindProperty("heightMax");
             topMaterial = serializedObject.FindProperty("topMaterial");
@@ -57,6 +59,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
             EditorGUILayout.PropertyField(basePrefab);
             EditorGUILayout.PropertyField(excludeProperty);
             EditorGUILayout.Separator();
+            EditorGUILayout.PropertyField(heightProperty);
             EditorGUILayout.PropertyField(heightMin);
             EditorGUILayout.PropertyField(heightMax);
             EditorGUILayout.PropertyField(pointedRoofTops);
