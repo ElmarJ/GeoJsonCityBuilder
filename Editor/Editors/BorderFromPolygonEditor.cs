@@ -10,7 +10,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
 
     [CustomEditor(typeof(BorderFromPolygon))]
     [CanEditMultipleObjects]
-    public class BorderFromPolygonEditor : UnityEditor.Editor
+    public class BorderFromPolygonEditor : UnityEditor.Editor //-V3072
     {
         private SerializedProperty floorPolygon;
         private SerializedProperty material;
@@ -60,7 +60,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
 
         private void CreateTestFloor()
         {
-            var controller = target as BlockFromPolygon;
+            var controller = target as BorderFromPolygon;
 
             controller.floorPolygon = new List<Vector3>() {
                 new( 5f, 0f, 10f),

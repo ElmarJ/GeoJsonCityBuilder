@@ -8,7 +8,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
 {
     [CustomEditor(typeof(PrefabsFromGeoJson))]
     [CanEditMultipleObjects]
-    public class PrefabsFromGeoJsonEditor : UnityEditor.Editor
+    public class PrefabsFromGeoJsonEditor : UnityEditor.Editor //-V3072
     {
         private SerializedProperty geoJsonFile;
         private SerializedProperty worldPosition;

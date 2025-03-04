@@ -10,7 +10,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
 
     [CustomEditor(typeof(BlockFromPolygon))]
     [CanEditMultipleObjects]
-    public class BlockFromPolygonEditor : UnityEditor.Editor
+    public class BlockFromPolygonEditor : UnityEditor.Editor //-V3072
     {
         private SerializedProperty topMaterial;
         private SerializedProperty bottomMaterial;

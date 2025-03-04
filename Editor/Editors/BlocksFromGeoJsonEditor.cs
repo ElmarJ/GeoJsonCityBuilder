@@ -9,7 +9,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
 
     [CustomEditor(typeof(BlocksFromGeoJson))]
     [CanEditMultipleObjects]
-    public class BlocksFromGeoJsonEditor : UnityEditor.Editor
+    public class BlocksFromGeoJsonEditor : UnityEditor.Editor //-V3072
     {
         private SerializedProperty geoJsonFile;
         private SerializedProperty worldPositionAnchor;

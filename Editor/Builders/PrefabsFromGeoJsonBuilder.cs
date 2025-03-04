@@ -32,6 +32,13 @@ namespace GeoJsonCityBuilder.Editor.Builders
             foreach (Feature feature in m_features)
             {
                 var point = feature.Geometry as Point;
+
+                if(point == null)
+                {
+                    Debug.LogWarning($"Feature {feature.Properties["id"] ?? feature.Properties["name"] ?? ""} is not a polygon. Skipping.");
+                    continue;
+                }
+
                 var go = (GameObject)PrefabUtility.InstantiatePrefab(Component.prefab, Component.transform);
 
                 // Todo: solve this, we shouldn't assign to positionComponent.

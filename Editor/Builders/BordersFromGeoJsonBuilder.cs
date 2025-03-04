@@ -37,6 +37,12 @@ namespace GeoJsonCityBuilder.Editor.Builders
             {
                 var geometry = feature.Geometry as Polygon;
 
+                if(geometry == null)
+                {
+                    Debug.LogWarning($"Feature {feature.Properties["id"] ?? feature.Properties["name"] ?? ""} is not a polygon. Skipping.");
+                    continue;
+                }
+
                 var border = new GameObject();
                 border.name = "Border " + i++.ToString();
                 border.transform.parent = Component.transform;

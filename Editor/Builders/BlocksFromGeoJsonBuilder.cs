@@ -40,6 +40,12 @@ namespace GeoJsonCityBuilder.Editor.Builders
             {
                 var geometry = feature.Geometry as Polygon;
 
+                if(geometry == null)
+                {
+                    Debug.LogWarning($"Feature {feature.Properties["id"] ?? feature.Properties["name"] ?? ""} is not a polygon. Skipping.");
+                    continue;
+                }
+
                 var block = Component.basePrefab ? (GameObject)PrefabUtility.InstantiatePrefab(Component.basePrefab) : new GameObject();
                 block.name = $"Block {i++}";
                 block.transform.parent = Component.transform;

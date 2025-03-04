@@ -7,7 +7,7 @@ namespace GeoJsonCityBuilder.Editor.Editors
 {
     [CustomEditor(typeof(BordersFromGeoJson))]
     [CanEditMultipleObjects]
-    public class BordersFromGeoJsonEditor : UnityEditor.Editor
+    public class BordersFromGeoJsonEditor : UnityEditor.Editor //-V3072
     {
         private SerializedProperty geoJsonFile;
         private SerializedProperty excludeProperty;
