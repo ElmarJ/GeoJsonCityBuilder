@@ -41,7 +41,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
                 var go = (GameObject)PrefabUtility.InstantiatePrefab(Component.prefab, Component.transform);
 
-                // Todo: solve this, we shouldn't assign to positionComponent.
+                // Todo: solve this, we shouldn't assign to position Component.
                 var worldOrigin = Component.worldPosition.SceneOrigin;
 
                 var position = point.Coordinates.ToCoordinate().ToLocalPosition(worldOrigin, go.transform.position.y);
@@ -56,6 +56,12 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 var existenceController = go.AddComponent<ExistenceController>();
                 existenceController.existencePeriodStart = GetYearFromField(feature, Component.timeStartYearField) ?? -9999;
                 existenceController.existencePeriodEnd = GetYearFromField(feature, Component.timeEndYearField) ?? 9999;
+
+                // Set GameObject as static if it is present in all years
+                if (existenceController.existencePeriodStart == -9999 && existenceController.existencePeriodEnd == 9999)
+                {
+                    go.isStatic = true;
+                }
             }
         }
     }

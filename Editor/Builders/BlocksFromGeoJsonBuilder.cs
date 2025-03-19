@@ -58,6 +58,12 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 existenceController.existencePeriodStart = GetYearFromField(feature, Component.timeStartYearField) ?? -9999;
                 existenceController.existencePeriodEnd = GetYearFromField(feature, Component.timeEndYearField) ?? 9999;
 
+                // Set GameObject as static if it is present in all years
+                if (existenceController.existencePeriodStart == -9999 && existenceController.existencePeriodEnd == 9999)
+                {
+                    block.isStatic = true;
+                }
+
                 var controller = block.AddComponent<BlockFromPolygon>();
 
                 double height = !feature.Properties.ContainsKey(Component.heightProperty) || feature.Properties[Component.heightProperty] == null ? 0 : (double)feature.Properties[Component.heightProperty];
