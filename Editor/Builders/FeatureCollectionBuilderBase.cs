@@ -53,7 +53,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
                 if (Component.transform.childCount > 0)
                 {
-                    Debug.LogError("Failed to remove all children");
+                    Debug.LogError("Failed to remove all children", Component.gameObject);
                 }
             }
         }
