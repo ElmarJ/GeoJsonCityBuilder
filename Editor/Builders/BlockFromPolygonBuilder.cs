@@ -35,6 +35,12 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 mesh = GameObject.AddComponent<ProBuilderMesh>();
             }
 
+            var collider = GameObject.GetComponent<MeshCollider>();
+
+            // Disable "cook for faster simulation" to avoid warnings about large distances.
+            // Haven't seen any performance penalty from this.
+            collider.cookingOptions = MeshColliderCookingOptions.UseFastMidphase & MeshColliderCookingOptions.EnableMeshCleaning & MeshColliderCookingOptions.WeldColocatedVertices;
+
             var first = BlockInfo.floorPolygon.First();
             var last = BlockInfo.floorPolygon.Last();
             if (first.x == last.x && first.y == last.y && first.z == last.z)
