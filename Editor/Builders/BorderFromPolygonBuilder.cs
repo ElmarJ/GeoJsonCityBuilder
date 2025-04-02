@@ -24,6 +24,7 @@ namespace GeoJsonCityBuilder.Editor.Builders
 
         public void Draw()
         {
+            RemoveDoubleVertices();
             RemoveAllChildren();
             PopulateCornerList();
 
@@ -53,6 +54,20 @@ namespace GeoJsonCityBuilder.Editor.Builders
                 };
 
                 DrawSegment(segmentFloorPolygon, $"Segment {i + 1}");
+            }
+        }
+
+        private void RemoveDoubleVertices()
+        {            
+            var first = BorderInfo.floorPolygon.First();
+            var last = BorderInfo.floorPolygon.Last();
+            if (first.x == last.x && first.y == last.y && first.z == last.z)
+            {
+                var success = BorderInfo.floorPolygon.Remove(BorderInfo.floorPolygon.Last());
+                if (!success)
+                {
+                    Debug.LogWarning($"Could not remove duplicate point on [{this.BorderInfo.name}]", GameObject);
+                }
             }
         }
 
